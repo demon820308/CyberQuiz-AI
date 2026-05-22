@@ -21,7 +21,7 @@ export async function getAllQuestions(db: D1Database): Promise<Question[]> {
 		}));
 	} catch (e) {
 		console.error('[DB Error] getAllQuestions:', e);
-		return [];
+		throw e;
 	}
 }
 
@@ -53,7 +53,7 @@ export async function insertQuestionsBatch(db: D1Database, questions: Question[]
 		return true;
 	} catch (e) {
 		console.error('[DB Error] insertQuestionsBatch:', e);
-		return false;
+		throw e;
 	}
 }
 
@@ -69,7 +69,7 @@ export async function getWrongRecords(db: D1Database): Promise<WrongRecord[]> {
 		}));
 	} catch (e) {
 		console.error('[DB Error] getWrongRecords:', e);
-		return [];
+		throw e;
 	}
 }
 
@@ -92,7 +92,7 @@ export async function updateWrongRecord(db: D1Database, record: WrongRecord): Pr
 		return true;
 	} catch (e) {
 		console.error('[DB Error] updateWrongRecord:', e);
-		return false;
+		throw e;
 	}
 }
 
@@ -102,7 +102,7 @@ export async function deleteWrongRecord(db: D1Database, questionId: number): Pro
 		return true;
 	} catch (e) {
 		console.error('[DB Error] deleteWrongRecord:', e);
-		return false;
+		throw e;
 	}
 }
 
@@ -112,7 +112,7 @@ export async function clearWrongBook(db: D1Database): Promise<boolean> {
 		return true;
 	} catch (e) {
 		console.error('[DB Error] clearWrongBook:', e);
-		return false;
+		throw e;
 	}
 }
 
@@ -128,7 +128,7 @@ export async function getQuizHistory(db: D1Database): Promise<QuizHistory[]> {
 		}));
 	} catch (e) {
 		console.error('[DB Error] getQuizHistory:', e);
-		return [];
+		throw e;
 	}
 }
 
@@ -146,7 +146,7 @@ export async function insertQuizHistory(db: D1Database, history: QuizHistory): P
 		return true;
 	} catch (e) {
 		console.error('[DB Error] insertQuizHistory:', e);
-		return false;
+		throw e;
 	}
 }
 
@@ -165,7 +165,7 @@ export async function getSessionProgress(db: D1Database): Promise<SessionProgres
 		};
 	} catch (e) {
 		console.error('[DB Error] getSessionProgress:', e);
-		return null;
+		throw e;
 	}
 }
 
@@ -191,7 +191,7 @@ export async function saveSessionProgress(db: D1Database, progress: SessionProgr
 		return true;
 	} catch (e) {
 		console.error('[DB Error] saveSessionProgress:', e);
-		return false;
+		throw e;
 	}
 }
 
@@ -201,6 +201,6 @@ export async function clearSessionProgress(db: D1Database): Promise<boolean> {
 		return true;
 	} catch (e) {
 		console.error('[DB Error] clearSessionProgress:', e);
-		return false;
+		throw e;
 	}
 }

@@ -140,6 +140,7 @@ class QuizStore {
 		mode: ExerciseMode;
 	} | null>(null);
 	isD1 = $state(false);
+	dbError = $state<string | null>(null);
 
 	// Global Toast State
 	toastMessage = $state<string | null>(null);
@@ -161,18 +162,24 @@ class QuizStore {
 
 	async hydrate(data: any) {
 		this.isD1 = !!data.isD1;
-		if (this.isD1) {
+		this.dbError = data.dbError || null;
+		
+		if (this.isD1 && !this.dbError) {
 			if (data.questions && data.questions.length > 0) {
 				this.questions = data.questions;
 			} else {
 				// Seed default questions to D1 so user is wowed at first glance!
 				this.questions = [...defaultQuestions];
 				try {
-					await fetch('/api/questions', {
+					const res = await fetch('/api/questions', {
 						method: 'POST',
 						headers: { 'Content-Type': 'application/json' },
 						body: JSON.stringify(defaultQuestions)
 					});
+					if (!res.ok) {
+						const errData: any = await res.json().catch(() => ({}));
+						console.error('Failed to seed default questions to D1:', errData.error || res.statusText);
+					}
 				} catch (e) {
 					console.error('Failed to seed default questions to D1:', e);
 				}
@@ -281,17 +288,20 @@ class QuizStore {
 	async saveQuestions() {
 		if (!browser) return;
 		localStorage.setItem('cq_questions', JSON.stringify(this.questions));
-		if (this.isD1) {
+		if (this.isD1 && !this.dbError) {
 			try {
 				const res = await fetch('/api/questions', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify(this.questions)
 				});
-				if (!res.ok) throw new Error('Database upload failed');
-			} catch (e) {
+				if (!res.ok) {
+					const errData: any = await res.json().catch(() => ({}));
+					throw new Error(errData.error || 'Database upload failed');
+				}
+			} catch (e: any) {
 				console.error('[Sync Error] saveQuestions:', e);
-				this.showToast('同步题库到云端数据库失败，将使用本地缓存', 'error');
+				this.showToast(`同步题库到云端数据库失败: ${e.message || '网络错误'}，将使用本地缓存`, 'error');
 			}
 		}
 	}
@@ -326,7 +336,7 @@ class QuizStore {
 			mode: this.exerciseMode
 		};
 
-		if (this.isD1) {
+		if (this.isD1 && !this.dbError) {
 			fetch('/api/quiz/progress', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
@@ -341,7 +351,7 @@ class QuizStore {
 		this.hasSavedProgress = false;
 		this.savedSessionDetails = null;
 
-		if (this.isD1) {
+		if (this.isD1 && !this.dbError) {
 			fetch('/api/quiz/progress', {
 				method: 'DELETE'
 			}).catch(e => console.error('[Sync Error] clearSessionProgress:', e));
@@ -533,7 +543,7 @@ class QuizStore {
 		this.saveSessionProgress();
 
 		// Cloud D1 synchronization (asynchronous & non-blocking)
-		if (this.isD1) {
+		if (this.isD1 && !this.dbError) {
 			try {
 				const res = await fetch('/api/quiz/submit', {
 					method: 'POST',
@@ -626,7 +636,7 @@ class QuizStore {
 		}
 		this.saveSessionProgress();
 
-		if (this.isD1) {
+		if (this.isD1 && !this.dbError) {
 			fetch('/api/wrong/remove', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
@@ -654,7 +664,7 @@ class QuizStore {
 		}
 		this.clearSessionProgress();
 
-		if (this.isD1) {
+		if (this.isD1 && !this.dbError) {
 			fetch('/api/wrong/clear', {
 				method: 'POST'
 			})

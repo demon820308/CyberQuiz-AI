@@ -133,6 +133,8 @@
 	function cancelConvert() {
 		convertMdContent = '';
 	}
+
+	let showDbWarning = $state(true);
 </script>
 
 <svelte:head>
@@ -270,8 +272,37 @@
 	</div>
 </header>
 
+{#if quizStore.isD1 && quizStore.dbError && showDbWarning}
+	<div
+		class="fixed top-16 left-0 w-full z-40 bg-error-container/95 backdrop-blur-md border-b border-error/30 px-margin-mobile md:px-margin-desktop py-3 flex items-center justify-between shadow-[0_4px_12px_rgba(0,0,0,0.15)] animate-in fade-in slide-in-from-top-2 duration-300"
+	>
+		<div class="flex items-center gap-3">
+			<span class="material-symbols-outlined text-error text-[22px] shrink-0 animate-pulse">warning</span>
+			<span class="font-body-sm text-label-md text-on-error-container">
+				云端数据库（D1）加载失败，已自动降级为浏览器本地缓存。错误原因：<code class="bg-surface-container-high/60 px-1.5 py-0.5 rounded font-mono text-xs text-error border border-error/20">{quizStore.dbError}</code>。请在 Cloudflare Pages 后台检查 D1 绑定，并确保已初始化数据库表结构。
+			</span>
+		</div>
+		<div class="flex items-center gap-4 shrink-0">
+			<a
+				href="https://github.com/demon820308/CyberQuiz-AI#%E7%AC%AC%E4%BA%8C%E6%AD%A5%E5%88%9D%E5%A7%8B%E5%8C%96%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E6%95%B0%E6%8D%AE%E5%BA%93%E8%A1%A8%E7%BB%93%E6%9E%84"
+				target="_blank"
+				class="text-xs text-primary font-bold underline hover:text-primary/80 transition-colors"
+			>
+				查看部署指南
+			</a>
+			<button
+				onclick={() => showDbWarning = false}
+				class="text-on-surface-variant hover:text-on-surface p-1 rounded-full hover:bg-surface-bright/20 transition-all active:scale-90"
+				title="关闭提示"
+			>
+				<span class="material-symbols-outlined text-[18px]">close</span>
+			</button>
+		</div>
+	</div>
+{/if}
+
 <!-- Main Page Wrapper -->
-<main class="min-h-screen">
+<main class="min-h-screen transition-all duration-300 {quizStore.isD1 && quizStore.dbError && showDbWarning ? 'pt-14 md:pt-12' : ''}">
 	{@render children()}
 </main>
 

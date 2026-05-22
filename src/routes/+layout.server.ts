@@ -4,7 +4,7 @@ import type { LayoutServerLoad } from './$types';
 export const load: LayoutServerLoad = async ({ platform }) => {
 	const db = platform?.env.DB;
 	if (!db) {
-		return { questions: [], wrongBook: [], history: [], progress: null, isD1: false };
+		return { questions: [], wrongBook: [], history: [], progress: null, isD1: false, dbError: null };
 	}
 
 	try {
@@ -20,16 +20,18 @@ export const load: LayoutServerLoad = async ({ platform }) => {
 			wrongBook,
 			history,
 			progress,
-			isD1: true
+			isD1: true,
+			dbError: null
 		};
-	} catch (e) {
+	} catch (e: any) {
 		console.error('[Layout Server Load Error]:', e);
 		return {
 			questions: [],
 			wrongBook: [],
 			history: [],
 			progress: null,
-			isD1: false
+			isD1: true,
+			dbError: e.message || String(e)
 		};
 	}
 };
