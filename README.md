@@ -99,13 +99,18 @@ graph TD
 
 ### 第二步：初始化生产环境数据库表结构
 
-通过 Wrangler 执行 SQL 迁移文件，在云端 D1 中生成相应的表。
+> ✨ **全自动零配置建表自愈（推荐）**：
+> 本系统已内置了 **D1 数据库全自动初始化与自愈机制**。当您在 Cloudflare Pages 后台成功绑定 D1 数据库并部署完成后，**无需执行任何手动 SQL 命令**，只需在浏览器中打开或刷新网页，后端服务便会自动在云端 D1 中创建所有必要的表结构（`questions`、`wrong_book`、`quiz_history` 和 `session_progress`）。
+>
+> 如果检测不到绑定的 D1 数据库资源，系统将自动降级为本地 LocalStorage 存储模式运行，不会引发任何报错。
 
-> ⚠️ **重要注意**：Wrangler 执行 `--remote` 时会读取 `wrangler.jsonc` 配置文件中的 `database_id`。如果您的本地 `wrangler.jsonc` 中的 `database_id` 仍为默认占位符 `"local-db-binding"`，直接执行可能会报错 `Invalid property: databaseId => Invalid uuid`。
+如果您需要通过命令行进行手动初始化或强制重置（可选），请使用以下命令：
+
+> ⚠️ **命令行注意**：Wrangler 执行 `--remote` 时会读取 `wrangler.jsonc` 配置文件中的 `database_id`。如果您的本地 `wrangler.jsonc` 中的 `database_id` 仍为默认占位符 `"local-db-binding"`，直接执行可能会报错 `Invalid property: databaseId => Invalid uuid`。
 > 
-> **请任选以下一种方法解决并执行初始化：**
+> **请任选以下一种方法解决并执行命令行初始化：**
 
-#### 方法 A：直接通过云端数据库 UUID 导入（推荐）
+#### 方法 A：直接通过云端数据库 UUID 导入
 1. 运行以下命令查看您刚才创建的数据库的真实 `UUID`（即 `Database ID`）：
    ```bash
    npx wrangler d1 list
