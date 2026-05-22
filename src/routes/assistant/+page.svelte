@@ -23,6 +23,20 @@
 	let showSettings = $state(false);
 	let isTestingConnection = $state(false);
 
+	let showConfirmModal = $state(false);
+	let pendingCategoryName = $state<string | null>(null);
+	let pendingStep = $state<number | null>(null);
+
+	let modeText = $derived(
+		quizStore.savedSessionDetails?.mode === 'wrong'
+			? '错题攻坚'
+			: quizStore.savedSessionDetails?.mode === 'random'
+			? '随机练习'
+			: quizStore.savedSessionDetails?.mode === 'sequential'
+			? '顺序练习'
+			: ''
+	);
+
 	onMount(() => {
 		if (typeof window !== 'undefined') {
 			inputApiKey = localStorage.getItem('cyber_ai_api_key') || '';
@@ -132,6 +146,16 @@
 
 	// Trigger "地狱攻坚" (mistakes practice) for a category
 	function triggerDirectMistakesPractice(categoryName: string) {
+		if (quizStore.hasSavedProgress) {
+			pendingCategoryName = categoryName;
+			pendingStep = null;
+			showConfirmModal = true;
+		} else {
+			executeDirectMistakesPractice(categoryName);
+		}
+	}
+
+	function executeDirectMistakesPractice(categoryName: string) {
 		const matchingWrongIds = new Set(
 			wrongBook
 				.filter(w => {
@@ -159,6 +183,16 @@
 
 	// Trigger study mode step shortcut
 	function triggerStepAction(step: number) {
+		if (quizStore.hasSavedProgress) {
+			pendingCategoryName = null;
+			pendingStep = step;
+			showConfirmModal = true;
+		} else {
+			executeStepAction(step);
+		}
+	}
+
+	function executeStepAction(step: number) {
 		if (step === 1) {
 			// Find weakest category and practice it or start normal study
 			if (aiReport.weakestCategories && aiReport.weakestCategories.length > 0) {
@@ -214,6 +248,18 @@
 			quizStore.initSession('random');
 			quizStore.showToast('直达第三步：开启全栈盲测抗压练习', 'success');
 			goto('/quiz');
+		}
+	}
+
+	function confirmRestart() {
+		showConfirmModal = false;
+		quizStore.clearSessionProgress();
+		if (pendingCategoryName !== null) {
+			executeDirectMistakesPractice(pendingCategoryName);
+			pendingCategoryName = null;
+		} else if (pendingStep !== null) {
+			executeStepAction(pendingStep);
+			pendingStep = null;
 		}
 	}
 
@@ -760,3 +806,59 @@
 
 	</div>
 </div>
+
+{#if showConfirmModal}
+	<div
+		class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in"
+	>
+		<div
+			class="glass-panel max-w-md w-full rounded-3xl p-8 border border-outline-variant/20 shadow-2xl relative overflow-hidden animate-scale-up"
+		>
+			<!-- Decorative Light -->
+			<div class="absolute -top-12 -right-12 w-32 h-32 bg-error/15 blur-2xl rounded-full"></div>
+			
+			<div class="flex items-center gap-4 text-error mb-4">
+				<div class="w-12 h-12 rounded-2xl bg-error/15 flex items-center justify-center border border-error/25">
+					<span class="material-symbols-outlined text-[28px]">warning</span>
+				</div>
+				<h3 class="font-headline-md text-headline-md text-on-surface">确认重新开始？</h3>
+			</div>
+
+			<p class="text-on-surface-variant font-body-md leading-relaxed mb-6">
+				检测到您有未完成的答题进度（<span class="text-primary font-semibold">{modeText}，第 {quizStore.savedSessionDetails?.questionNumber} 题</span>）。重新开始会清除现有的答题记录，确定要从头开始新练习吗？
+			</p>
+
+			<div class="flex gap-4">
+				<button
+					onclick={() => { showConfirmModal = false; pendingCategoryName = null; pendingStep = null; }}
+					class="flex-1 py-3 border border-outline-variant/30 text-on-surface hover:bg-surface-bright/10 font-bold rounded-xl transition-all cursor-pointer active:scale-95"
+				>
+					取消
+				</button>
+				<button
+					onclick={confirmRestart}
+					class="flex-1 py-3 bg-error text-white font-bold rounded-xl hover:bg-error/80 transition-all cursor-pointer active:scale-95 shadow-lg shadow-error/20"
+				>
+					确认重新开始
+				</button>
+			</div>
+		</div>
+	</div>
+{/if}
+
+<style>
+	@keyframes fadeIn {
+		from { opacity: 0; }
+		to { opacity: 1; }
+	}
+	@keyframes scaleUp {
+		from { transform: scale(0.95); opacity: 0; }
+		to { transform: scale(1); opacity: 1; }
+	}
+	.animate-fade-in {
+		animation: fadeIn 0.2s ease-out forwards;
+	}
+	.animate-scale-up {
+		animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	}
+</style>
