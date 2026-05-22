@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CyberQuiz AI - Intelligence Analysis</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=Manrope:wght@600;700;800&amp;family=JetBrains+Mono&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-variant": "#2d3449",
+                        "inverse-surface": "#dae2fd",
+                        "error-container": "#93000a",
+                        "tertiary-fixed-dim": "#4ae176",
+                        "on-tertiary-container": "#003111",
+                        "on-error": "#690005",
+                        "surface-container": "#171f33",
+                        "secondary-container": "#6f00be",
+                        "on-primary": "#1000a9",
+                        "background": "#0b1326",
+                        "on-tertiary-fixed": "#002109",
+                        "on-surface": "#dae2fd",
+                        "outline": "#908fa0",
+                        "primary-container": "#8083ff",
+                        "on-primary-container": "#0d0096",
+                        "primary": "#c0c1ff",
+                        "on-secondary-container": "#d6a9ff",
+                        "on-secondary": "#490080",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary-fixed": "#2c0051",
+                        "error": "#ffb4ab",
+                        "secondary-fixed": "#f0dbff",
+                        "surface": "#0b1326",
+                        "surface-container-high": "#222a3d",
+                        "secondary-fixed-dim": "#ddb7ff",
+                        "surface-container-highest": "#2d3449",
+                        "on-secondary-fixed-variant": "#6900b3",
+                        "primary-fixed": "#e1e0ff",
+                        "inverse-primary": "#494bd6",
+                        "inverse-on-surface": "#283044",
+                        "surface-tint": "#c0c1ff",
+                        "surface-dim": "#0b1326",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "tertiary-fixed": "#6bff8f",
+                        "surface-container-low": "#131b2e",
+                        "on-surface-variant": "#c7c4d7",
+                        "tertiary-container": "#00a74b",
+                        "on-background": "#dae2fd",
+                        "on-primary-fixed": "#07006c",
+                        "on-tertiary-fixed-variant": "#005321",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "secondary": "#ddb7ff",
+                        "outline-variant": "#464554",
+                        "surface-container-lowest": "#060e20",
+                        "tertiary": "#4ae176",
+                        "on-tertiary": "#003915",
+                        "surface-bright": "#31394d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "40px",
+                        "container-max": "1280px",
+                        "stack-lg": "32px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Manrope"],
+                        "headline-md": ["Manrope"],
+                        "code": ["jetbrainsMono"],
+                        "headline-xl": ["Manrope"],
+                        "body-md": ["Inter"],
+                        "headline-lg-mobile": ["Manrope"],
+                        "body-sm": ["Inter"],
+                        "label-md": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(23, 31, 51, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(144, 143, 160, 0.15);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+        .gradient-border {
+            position: relative;
+        }
+        .gradient-border::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            padding: 1px;
+            border-radius: inherit;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(168, 85, 247, 0.1));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+        .cyber-glow-primary {
+            box-shadow: 0 0 25px rgba(99, 102, 241, 0.25);
+        }
+        .donut-chart {
+            background: conic-gradient(
+                #6366F1 0% 63%,
+                #A855F7 63% 100%
+            );
+            border-radius: 50%;
+        }
+        .donut-hole {
+            background: #0b1326;
+            border-radius: 50%;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2d3449;
+            border-radius: 10px;
+        }
+        .shimmer {
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0) 100%);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite linear;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen selection:bg-primary/30">
+<!-- Top Navigation Bar -->
+<header class="flex justify-between items-center w-full px-margin-desktop h-16 fixed top-0 z-50 bg-surface-container/80 backdrop-blur-xl border-b border-outline-variant/20 shadow-sm">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+<span class="material-symbols-outlined text-white text-[20px]">analytics</span>
+</div>
+<h1 class="font-headline-md text-headline-md font-extrabold text-primary tracking-tight">CyberQuiz AI</h1>
+<nav class="hidden md:flex ml-12 gap-8 items-center h-full">
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-md" href="#">Dashboard</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-body-md" href="#">Library</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-body-md" href="#">Analytics</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-5 py-2 rounded-xl font-label-md flex items-center gap-2 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-indigo-500/20">
+<span class="material-symbols-outlined text-[18px]">upload_file</span>
+                上传 .md 题库
+            </button>
+<div class="flex items-center gap-2 ml-2">
+<span class="material-symbols-outlined p-2 text-on-surface-variant hover:bg-surface-bright/10 rounded-full transition-all cursor-pointer">notifications</span>
+<span class="material-symbols-outlined p-2 text-on-surface-variant hover:bg-surface-bright/10 rounded-full transition-all cursor-pointer">settings</span>
+<img alt="Profile" class="w-8 h-8 rounded-full border border-outline-variant/30 ml-2 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnJ9tyDaHEZUNKpNMZ3tomvLr5xn4wzf9A2AcZ0Qd4tDre7K-7cQVH8onNElKSTfQaRjZHWqP3J3AKkTLyx1XCiWLHBogiZHWPg9QHOY-gpz4Wzdv8NJmPmu2-prfH3u8k1lXKl0hKmgVRmdFfLHh1OdeamHMxiY3FP3py0yd0ITmWWijPeAKenSDQjxnmbkgoTCGnUHRY7BXO5LjvTONlS8BZWaQiaGfJ8qlHx3w5FUIKXxQZB5IEOwT4KTTj3nnxt0TtBQkDWd66"/>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-20 px-4 md:px-margin-desktop max-w-[1440px] mx-auto">
+<!-- Title & Hero Section -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-stack-lg relative">
+<div class="z-10">
+<div class="flex items-center gap-3 mb-2">
+<h2 class="font-headline-xl text-headline-xl text-on-surface">2026年计算机基础题库</h2>
+<span class="px-3 py-1 bg-primary/10 border border-primary/20 rounded-full text-primary font-label-md">248题</span>
+</div>
+<p class="text-on-surface-variant text-body-lg max-w-2xl">
+                    基于 AI 智能分析，为你提供精准的学习建议和能力提升方案，助力攻克核心知识点。
+                </p>
+</div>
+<!-- Abstract Floating Graphic -->
+<div class="hidden lg:block absolute -top-12 right-0 w-[300px] h-[200px] pointer-events-none">
+<div class="relative w-full h-full flex items-center justify-center">
+<div class="absolute w-48 h-48 bg-indigo-500/10 rounded-full blur-[60px] animate-pulse"></div>
+<img alt="Dashboard Abstract" class="w-40 h-40 object-cover rounded-3xl transform rotate-12 glass-card border-indigo-500/30" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdwYHKeS--NW7HBcAovF1jbSFCWXtGY0HZD5fR_lAGTVKcxpmvGJAOLmW_hJWT14gJDDFHJf-F8okfOTiS8fuCap6XIISzRlaOYMvUZ21v8OLbe1foRoKptLNtmXGfN8ksAWACh6qZmkXxGfL3MJahdQzzt9-N26fsttxz6NoEM3tN746EAIQwvGIwSWFUcxdYKJMRW76g32wrpPy1H6Pc7expagtlOIg8Ue-GtZ9MjtipqPdMc_ODrP4SVxWwltG8uU93x9O6d8rh"/>
+</div>
+</div>
+</div>
+<!-- Dashboard Bento Grid - Row 1 (Metadata Summaries) -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-stack-lg items-stretch">
+<!-- Question Distribution (Donut Chart) -->
+<div class="md:col-span-4 glass-card rounded-3xl p-stack-md gradient-border flex flex-col justify-between border border-outline-variant/10 min-h-[360px]">
+<div class="flex justify-between items-center mb-stack-md">
+<h3 class="font-headline-md text-headline-md text-on-surface">题型分布</h3>
+<span class="material-symbols-outlined text-outline text-[20px] cursor-help" title="单选题和多选题的比重">info</span>
+</div>
+<div class="flex-grow flex items-center justify-around py-4">
+<div class="relative w-40 h-40">
+<div class="donut-chart w-full h-full flex items-center justify-center transition-all duration-500" style="background: conic-gradient(#6366F1 0% 63%, #A855F7 63% 100%)">
+<div class="donut-hole w-28 h-28 flex flex-col items-center justify-center">
+<span class="font-headline-xl text-[28px] text-on-surface font-extrabold">248</span>
+<span class="text-on-surface-variant text-body-sm">总题数</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-3 mt-4">
+<div class="flex justify-between items-center bg-surface-container-low/40 p-3 rounded-2xl border border-outline-variant/5">
+<div class="flex items-center gap-3">
+<div class="w-3.5 h-3.5 rounded-full bg-[#6366F1]"></div>
+<span class="text-on-surface-variant text-body-sm">单选题</span>
+</div>
+<span class="text-on-surface font-bold font-code">156 道 (63%)</span>
+</div>
+<div class="flex justify-between items-center bg-surface-container-low/40 p-3 rounded-2xl border border-outline-variant/5">
+<div class="flex items-center gap-3">
+<div class="w-3.5 h-3.5 rounded-full bg-[#A855F7]"></div>
+<span class="text-on-surface-variant text-body-sm">多选题</span>
+</div>
+<span class="text-on-surface font-bold font-code">92 道 (37%)</span>
+</div>
+</div>
+</div>
+
+<!-- Difficulty Distribution (Now in the Middle) -->
+<div class="md:col-span-4 glass-card rounded-3xl p-stack-md gradient-border flex flex-col justify-between border border-outline-variant/10 min-h-[360px]">
+<div class="flex justify-between items-center mb-stack-md">
+<h3 class="font-headline-md text-headline-md text-on-surface">难度分布</h3>
+<span class="material-symbols-outlined text-outline text-[20px]" title="题库的难度层级分布">info</span>
+</div>
+<div class="flex-grow flex flex-col justify-center gap-6 my-auto">
+<div class="flex items-center gap-3">
+<span class="text-body-sm text-on-surface-variant w-10">简单</span>
+<div class="flex-grow h-2.5 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-tertiary rounded-full" style="width: 30%"></div>
+</div>
+<span class="text-body-sm text-on-surface w-12 text-right font-code font-bold">30%</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-body-sm text-on-surface-variant w-10">中等</span>
+<div class="flex-grow h-2.5 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 50%"></div>
+</div>
+<span class="text-body-sm text-on-surface w-12 text-right font-code font-bold">50%</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-body-sm text-on-surface-variant w-10">困难</span>
+<div class="flex-grow h-2.5 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-error rounded-full" style="width: 20%"></div>
+</div>
+<span class="text-body-sm text-on-surface w-12 text-right font-code font-bold">20%</span>
+</div>
+</div>
+<div class="text-body-sm text-on-surface-variant mt-4 text-center border-t border-outline-variant/5 pt-3">
+难度基于题库元数据与算法统计
+</div>
+</div>
+
+<!-- AI Suggestions Card (Now on the Right) -->
+<div class="md:col-span-4 relative glass-card rounded-3xl p-stack-md border-primary/30 cyber-glow-primary overflow-hidden flex flex-col justify-between border border-outline-variant/10 min-h-[360px] group">
+<div class="absolute inset-0 shimmer opacity-50 group-hover:opacity-100 transition-opacity"></div>
+<div class="relative z-10 space-y-4 my-auto flex-grow flex flex-col justify-center">
+<div class="flex items-center gap-2 mb-2">
+<div class="p-1.5 bg-primary/20 rounded-lg text-primary">
+<span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+</div>
+<h3 class="font-label-md text-primary tracking-wide font-bold">AI 智能学习建议</h3>
+</div>
+<ul class="space-y-4">
+<li class="flex gap-3 text-body-sm items-start">
+<span class="material-symbols-outlined text-secondary text-[20px] flex-shrink-0">target</span>
+<span>推荐优先练习: <span class="text-secondary font-bold">数据库</span> 相关题目</span>
+</li>
+<li class="flex gap-3 text-body-sm items-start">
+<span class="material-symbols-outlined text-primary text-[20px] flex-shrink-0">bolt</span>
+<span>当前最薄弱知识点为: <span class="text-primary font-bold">计算机网络</span></span>
+</li>
+<li class="flex gap-3 text-body-sm items-start">
+<span class="material-symbols-outlined text-tertiary text-[20px] flex-shrink-0">event_repeat</span>
+<span>建议练习模式: 开启 <span class="text-tertiary font-bold">“乱序刷题”</span> 提升思维灵敏度</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+<!-- Bento Dashboard Grid - Row 2 (Detailed Knowledge Coverage) -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-stack-lg">
+<!-- Knowledge Points Coverage (Bar List) -->
+<div class="md:col-span-12 glass-card rounded-3xl p-stack-md gradient-border flex flex-col border border-outline-variant/10">
+<div class="flex justify-between items-center mb-stack-md">
+<h3 class="font-headline-md text-headline-md text-on-surface">知识点覆盖分析</h3>
+<span class="material-symbols-outlined text-outline text-[20px] cursor-help" title="当前题库在各知识领域的覆盖量">info</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-5">
+<!-- Bar 1 -->
+<div class="space-y-2">
+<div class="flex justify-between text-body-sm">
+<span class="text-on-surface font-semibold text-body-md">Python基础</span>
+<span class="text-on-surface-variant font-code">68 题 (27%)</span>
+</div>
+<div class="h-2.5 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-indigo-500 to-indigo-400 rounded-full transition-all duration-500" style="width: 27%"></div>
+</div>
+</div>
+<!-- Bar 2 -->
+<div class="space-y-2">
+<div class="flex justify-between text-body-sm">
+<span class="text-on-surface font-semibold text-body-md">HTTP协议</span>
+<span class="text-on-surface-variant font-code">45 题 (18%)</span>
+</div>
+<div class="h-2.5 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-indigo-500 to-indigo-400 rounded-full transition-all duration-500" style="width: 18%"></div>
+</div>
+</div>
+<!-- Bar 3 -->
+<div class="space-y-2">
+<div class="flex justify-between text-body-sm">
+<span class="text-on-surface font-semibold text-body-md">操作系统</span>
+<span class="text-on-surface-variant font-code">38 题 (15%)</span>
+</div>
+<div class="h-2.5 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-indigo-500 to-indigo-400 rounded-full transition-all duration-500" style="width: 15%"></div>
+</div>
+</div>
+<!-- Bar 4 -->
+<div class="space-y-2">
+<div class="flex justify-between text-body-sm">
+<span class="text-on-surface font-semibold text-body-md">数据库</span>
+<span class="text-on-surface-variant font-code">36 题 (15%)</span>
+</div>
+<div class="h-2.5 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-indigo-500 to-indigo-400 rounded-full transition-all duration-500" style="width: 15%"></div>
+</div>
+</div>
+<!-- Bar 5 -->
+<div class="space-y-2">
+<div class="flex justify-between text-body-sm">
+<span class="text-on-surface font-semibold text-body-md">计算机网络</span>
+<span class="text-on-surface-variant font-code">32 题 (13%)</span>
+</div>
+<div class="h-2.5 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-indigo-500 to-indigo-400 rounded-full transition-all duration-500" style="width: 13%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Questions Overview Table -->
+<section class="glass-card rounded-3xl p-stack-md gradient-border">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-md text-headline-md">题目概览 <span class="text-body-md text-on-surface-variant font-normal ml-2">(最近 5 题)</span></h3>
+<button class="text-primary text-body-sm hover:underline flex items-center gap-1">
+                    查看全部 <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant/10 text-on-surface-variant font-label-md">
+<th class="pb-4 font-normal">题号</th>
+<th class="pb-4 font-normal">题型</th>
+<th class="pb-4 font-normal">题目预览</th>
+<th class="pb-4 font-normal">知识点</th>
+<th class="pb-4 font-normal">难度</th>
+<th class="pb-4 font-normal">正确率</th>
+<th class="pb-4 font-normal text-right">操作</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/5">
+<!-- Table Row 1 -->
+<tr class="group hover:bg-surface-bright/5 transition-colors">
+<td class="py-5 font-code text-primary">246</td>
+<td class="py-5">
+<span class="px-2 py-0.5 bg-tertiary/10 text-tertiary text-[12px] rounded border border-tertiary/20">单选题</span>
+</td>
+<td class="py-5 max-w-[300px] truncate text-on-surface">以下哪个不是 Python 的内置数据类型？</td>
+<td class="py-5 text-on-surface-variant">Python基础</td>
+<td class="py-5">
+<span class="text-tertiary flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>简单</span>
+</td>
+<td class="py-5 font-bold">68%</td>
+<td class="py-5 text-right">
+<button class="text-primary-container hover:text-primary border border-primary-container/30 hover:border-primary px-3 py-1 rounded-lg text-body-sm transition-all active:scale-95">查看解析</button>
+</td>
+</tr>
+<!-- Table Row 2 -->
+<tr class="group hover:bg-surface-bright/5 transition-colors">
+<td class="py-5 font-code text-primary">247</td>
+<td class="py-5">
+<span class="px-2 py-0.5 bg-secondary/10 text-secondary text-[12px] rounded border border-secondary/20">多选题</span>
+</td>
+<td class="py-5 max-w-[300px] truncate text-on-surface">关于 HTTP 协议，下列说法正确的是？</td>
+<td class="py-5 text-on-surface-variant">HTTP协议</td>
+<td class="py-5">
+<span class="text-primary flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-primary"></span>中等</span>
+</td>
+<td class="py-5 font-bold">45%</td>
+<td class="py-5 text-right">
+<button class="text-primary-container hover:text-primary border border-primary-container/30 hover:border-primary px-3 py-1 rounded-lg text-body-sm transition-all active:scale-95">查看解析</button>
+</td>
+</tr>
+<!-- Table Row 3 -->
+<tr class="group hover:bg-surface-bright/5 transition-colors">
+<td class="py-5 font-code text-primary">248</td>
+<td class="py-5">
+<span class="px-2 py-0.5 bg-tertiary/10 text-tertiary text-[12px] rounded border border-tertiary/20">单选题</span>
+</td>
+<td class="py-5 max-w-[300px] truncate text-on-surface">在 Linux 系统中，查看 current 目录的命令是？</td>
+<td class="py-5 text-on-surface-variant">操作系统</td>
+<td class="py-5">
+<span class="text-tertiary flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>简单</span>
+</td>
+<td class="py-5 font-bold">72%</td>
+<td class="py-5 text-right">
+<button class="text-primary-container hover:text-primary border border-primary-container/30 hover:border-primary px-3 py-1 rounded-lg text-body-sm transition-all active:scale-95">查看解析</button>
+</td>
+</tr>
+<!-- Table Row 4 -->
+<tr class="group hover:bg-surface-bright/5 transition-colors">
+<td class="py-5 font-code text-primary">249</td>
+<td class="py-5">
+<span class="px-2 py-0.5 bg-secondary/10 text-secondary text-[12px] rounded border border-secondary/20">多选题</span>
+</td>
+<td class="py-5 max-w-[300px] truncate text-on-surface">以下哪些是数据库的 ACID 特性？</td>
+<td class="py-5 text-on-surface-variant">数据库</td>
+<td class="py-5">
+<span class="text-primary flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-primary"></span>中等</span>
+</td>
+<td class="py-5 font-bold">38%</td>
+<td class="py-5 text-right">
+<button class="text-primary-container hover:text-primary border border-primary-container/30 hover:border-primary px-3 py-1 rounded-lg text-body-sm transition-all active:scale-95">查看解析</button>
+</td>
+</tr>
+<!-- Table Row 5 -->
+<tr class="group hover:bg-surface-bright/5 transition-colors">
+<td class="py-5 font-code text-primary">250</td>
+<td class="py-5">
+<span class="px-2 py-0.5 bg-tertiary/10 text-tertiary text-[12px] rounded border border-tertiary/20">单选题</span>
+</td>
+<td class="py-5 max-w-[300px] truncate text-on-surface">在计算机网络中，DNS 的作用是？</td>
+<td class="py-5 text-on-surface-variant">计算机网络</td>
+<td class="py-5">
+<span class="text-error flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-error"></span>困难</span>
+</td>
+<td class="py-5 font-bold">29%</td>
+<td class="py-5 text-right">
+<button class="text-primary-container hover:text-primary border border-primary-container/30 hover:border-primary px-3 py-1 rounded-lg text-body-sm transition-all active:scale-95">查看解析</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Footer Motto -->
+<footer class="mt-stack-lg flex flex-col items-center justify-center opacity-60">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-[20px] text-primary">lightbulb</span>
+<p class="text-body-md italic tracking-wide">坚持每天练习，进步看得见！</p>
+</div>
+</footer>
+</main>
+<!-- Bottom Navigation Bar (Mobile only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 bg-surface-container-lowest/90 backdrop-blur-2xl border-t border-outline-variant/10 shadow-[0_-4px_20px_rgba(0,0,0,0.4)] flex justify-around items-center px-margin-mobile py-3 rounded-t-xl">
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary-fixed-dim transition-colors">
+<span class="material-symbols-outlined">home</span>
+<span class="text-label-md mt-1">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary-fixed-dim transition-colors">
+<span class="material-symbols-outlined">school</span>
+<span class="text-label-md mt-1">Study</span>
+</button>
+<button class="flex flex-col items-center justify-center text-primary bg-primary-container/10 rounded-xl px-4 py-1 shadow-[0_0_15px_rgba(192,193,255,0.2)] scale-110">
+<span class="material-symbols-outlined">insights</span>
+<span class="text-label-md mt-1">Stats</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary-fixed-dim transition-colors">
+<span class="material-symbols-outlined">person</span>
+<span class="text-label-md mt-1">Profile</span>
+</button>
+</nav>
+<script>
+        // Simple interactive effect for hover cards
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+
+        // Background decorative parallax particles
+        const createParticle = () => {
+            const p = document.createElement('div');
+            p.className = 'fixed pointer-events-none rounded-full bg-indigo-500/10 blur-[1px]';
+            const size = Math.random() * 4 + 1;
+            p.style.width = `${size}px`;
+            p.style.height = `${size}px`;
+            p.style.left = `${Math.random() * 100}vw`;
+            p.style.top = `${Math.random() * 100}vh`;
+            p.style.animation = `float ${Math.random() * 20 + 10}s infinite ease-in-out`;
+            document.body.appendChild(p);
+        };
+        for(let i=0; i<20; i++) createParticle();
+
+        // Particle float animation style
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float {
+                0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+                50% { transform: translateY(-100px) translateX(20px); opacity: 0.5; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body></html>
