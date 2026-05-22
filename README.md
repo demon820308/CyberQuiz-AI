@@ -98,10 +98,29 @@ graph TD
    ```
 
 ### 第二步：初始化生产环境数据库表结构
-通过 Wrangler 执行 SQL 文件，在云端 D1 中生成相应的表：
-```bash
-npx wrangler d1 execute cyberquiz_db --remote --file=./schema.sql
-```
+
+通过 Wrangler 执行 SQL 迁移文件，在云端 D1 中生成相应的表。
+
+> ⚠️ **重要注意**：Wrangler 执行 `--remote` 时会读取 `wrangler.jsonc` 配置文件中的 `database_id`。如果您的本地 `wrangler.jsonc` 中的 `database_id` 仍为默认占位符 `"local-db-binding"`，直接执行可能会报错 `Invalid property: databaseId => Invalid uuid`。
+> 
+> **请任选以下一种方法解决并执行初始化：**
+
+#### 方法 A：直接通过云端数据库 UUID 导入（推荐）
+1. 运行以下命令查看您刚才创建的数据库的真实 `UUID`（即 `Database ID`）：
+   ```bash
+   npx wrangler d1 list
+   ```
+2. 复制 `cyberquiz_db` 的 UUID，并将其替换到下方命令中运行：
+   ```bash
+   npx wrangler d1 execute <您的-UUID> --remote --file=./schema.sql
+   ```
+
+#### 方法 B：更新配置文件后导入
+1. 将刚才创建数据库时输出的真实 `database_id` UUID 更新到项目根目录下的 `wrangler.jsonc` 文件中。
+2. 直接运行数据库名称进行导入：
+   ```bash
+   npx wrangler d1 execute cyberquiz_db --remote --file=./schema.sql
+   ```
 
 ### 第三步：在 Cloudflare 控制台部署项目
 
