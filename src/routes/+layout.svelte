@@ -5,7 +5,7 @@
 	import { goto } from '$app/navigation';
 	import { parseMarkdown } from '$lib/utils/mdParser';
 	import ParserPreviewModal from '$lib/components/ParserPreviewModal.svelte';
-	import ConvertModal from '$lib/components/ConvertModal.svelte';
+
 	import type { Question } from '$lib/types';
 	import { untrack } from 'svelte';
 
@@ -74,65 +74,7 @@
 		fileInput?.click();
 	}
 
-	// ── AI Convert ─────────────────────────────────────────────────────────
-	let convertFileInput: HTMLInputElement | null = null;
-	let convertMdContent = $state('');
 
-	function triggerConvert() {
-		convertFileInput?.click();
-	}
-
-	function handleConvertFileSelect(event: Event) {
-		const target = event.target as HTMLInputElement;
-		const file = target.files?.[0];
-		if (!file) return;
-
-		const reader = new FileReader();
-		reader.onload = (e) => {
-			const text = e.target?.result as string;
-			if (text && text.trim().length > 0) {
-				convertMdContent = text;
-			} else {
-				quizStore.showToast('文件内容为空', 'error');
-			}
-		};
-		reader.onerror = () => {
-			quizStore.showToast('读取文件出错', 'error');
-		};
-		reader.readAsText(file);
-		target.value = '';
-	}
-
-	async function confirmConvertReplace(questions: Question[]) {
-		quizStore.questions = [...questions];
-		await quizStore.saveQuestions();
-		quizStore.initSession(quizStore.exerciseMode);
-		quizStore.clearSessionProgress();
-		quizStore.showToast(`AI 转化成功！已替换题库，共 ${questions.length} 道题目`, 'success');
-		convertMdContent = '';
-		goto('/');
-	}
-
-	async function confirmConvertMerge(questions: Question[]) {
-		const existingIds = new Set(quizStore.questions.map(q => q.id));
-		// Re-assign IDs for merged questions to avoid conflicts
-		const maxId = quizStore.questions.reduce((max, q) => Math.max(max, q.id), 0);
-		const toAdd = questions.map((q, idx) => ({
-			...q,
-			id: maxId + idx + 1
-		}));
-		quizStore.questions = [...quizStore.questions, ...toAdd];
-		await quizStore.saveQuestions();
-		quizStore.initSession(quizStore.exerciseMode);
-		quizStore.clearSessionProgress();
-		quizStore.showToast(`AI 转化成功！已合并导入 ${toAdd.length} 道新题目，题库共 ${quizStore.questions.length} 道`, 'success');
-		convertMdContent = '';
-		goto('/');
-	}
-
-	function cancelConvert() {
-		convertMdContent = '';
-	}
 
 	let showDbWarning = $state(true);
 </script>
@@ -150,14 +92,7 @@
 	onchange={handleFileUpload}
 />
 
-<!-- Hidden File Input for AI convert -->
-<input
-	type="file"
-	accept=".md"
-	class="hidden"
-	bind:this={convertFileInput}
-	onchange={handleConvertFileSelect}
-/>
+
 
 <!-- Toast Notification -->
 {#if quizStore.toastMessage}
@@ -227,14 +162,7 @@
 				<span class="material-symbols-outlined text-[20px]">upload_file</span>
 				<span class="font-label-md text-label-md">Upload .md</span>
 			</button>
-			<!-- AI Convert Button -->
-			<button
-				onclick={triggerConvert}
-				class="flex items-center gap-2 bg-gradient-to-r from-[#A855F7]/15 to-[#EC4899]/15 border border-secondary/30 text-secondary px-4 py-2 rounded-xl hover:from-[#A855F7]/25 hover:to-[#EC4899]/25 transition-all duration-300 active:scale-95"
-			>
-				<span class="material-symbols-outlined text-[20px]">auto_awesome</span>
-				<span class="font-label-md text-label-md">AI 转化</span>
-			</button>
+
 		</div>
 
 		<!-- Mobile Buttons -->
@@ -246,13 +174,7 @@
 			>
 				<span class="material-symbols-outlined">upload_file</span>
 			</button>
-			<button
-				onclick={triggerConvert}
-				class="p-2 text-secondary hover:bg-secondary/10 rounded-full transition-all"
-				title="AI 转化"
-			>
-				<span class="material-symbols-outlined">auto_awesome</span>
-			</button>
+
 		</div>
 
 		<div class="flex gap-1 md:gap-2">
@@ -359,11 +281,4 @@
 	/>
 {/if}
 
-{#if convertMdContent}
-	<ConvertModal
-		mdContent={convertMdContent}
-		onConfirmReplace={confirmConvertReplace}
-		onConfirmMerge={confirmConvertMerge}
-		onCancel={cancelConvert}
-	/>
-{/if}
+
