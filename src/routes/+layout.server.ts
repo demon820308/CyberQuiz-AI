@@ -1,5 +1,15 @@
-import { getAllQuestions, getWrongRecords, getQuizHistory, getSessionProgress } from '$lib/server/db';
+import { getAllQuestions, getWrongRecords, getQuizHistory, getSessionProgress, initializeDatabase } from '$lib/server/db';
 import type { LayoutServerLoad } from './$types';
+
+async function loadData(db: D1Database) {
+	const [questions, wrongBook, history, progress] = await Promise.all([
+		getAllQuestions(db),
+		getWrongRecords(db),
+		getQuizHistory(db),
+		getSessionProgress(db)
+	]);
+	return { questions, wrongBook, history, progress };
+}
 
 export const load: LayoutServerLoad = async ({ platform }) => {
 	const db = platform?.env.DB;
@@ -8,22 +18,36 @@ export const load: LayoutServerLoad = async ({ platform }) => {
 	}
 
 	try {
-		const [questions, wrongBook, history, progress] = await Promise.all([
-			getAllQuestions(db),
-			getWrongRecords(db),
-			getQuizHistory(db),
-			getSessionProgress(db)
-		]);
-
+		const data = await loadData(db);
 		return {
-			questions,
-			wrongBook,
-			history,
-			progress,
+			...data,
 			isD1: true,
 			dbError: null
 		};
 	} catch (e: any) {
+		const errorStr = String(e.message || e);
+		if (errorStr.includes('no such table')) {
+			try {
+				await initializeDatabase(db);
+				const data = await loadData(db);
+				return {
+					...data,
+					isD1: true,
+					dbError: null
+				};
+			} catch (initErr: any) {
+				console.error('[DB Auto-Init Failed]:', initErr);
+				return {
+					questions: [],
+					wrongBook: [],
+					history: [],
+					progress: null,
+					isD1: true,
+					dbError: initErr.message || String(initErr)
+				};
+			}
+		}
+
 		console.error('[Layout Server Load Error]:', e);
 		return {
 			questions: [],
@@ -35,3 +59,4 @@ export const load: LayoutServerLoad = async ({ platform }) => {
 		};
 	}
 };
+

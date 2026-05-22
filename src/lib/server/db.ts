@@ -204,3 +204,49 @@ export async function clearSessionProgress(db: D1Database): Promise<boolean> {
 		throw e;
 	}
 }
+
+export async function initializeDatabase(db: D1Database): Promise<void> {
+	const schema = `
+		CREATE TABLE IF NOT EXISTS questions (
+			id INTEGER PRIMARY KEY,
+			type TEXT CHECK(type IN ('single', 'multiple')) NOT NULL,
+			title TEXT NOT NULL,
+			options TEXT NOT NULL,
+			answer TEXT NOT NULL,
+			explanation TEXT NOT NULL,
+			difficulty TEXT CHECK(difficulty IN ('easy', 'medium', 'hard')) NOT NULL,
+			category TEXT NOT NULL,
+			knowledgeTags TEXT
+		);
+
+		CREATE TABLE IF NOT EXISTS wrong_book (
+			questionId INTEGER PRIMARY KEY,
+			count INTEGER NOT NULL DEFAULT 1,
+			wrongCount INTEGER NOT NULL DEFAULT 1,
+			lastWrongTime TEXT NOT NULL,
+			FOREIGN KEY(questionId) REFERENCES questions(id) ON DELETE CASCADE
+		);
+
+		CREATE TABLE IF NOT EXISTS quiz_history (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			questionId INTEGER NOT NULL,
+			selected TEXT NOT NULL,
+			correct INTEGER NOT NULL,
+			time TEXT NOT NULL,
+			FOREIGN KEY(questionId) REFERENCES questions(id) ON DELETE CASCADE
+		);
+
+		CREATE TABLE IF NOT EXISTS session_progress (
+			id INTEGER PRIMARY KEY DEFAULT 1,
+			currentIndex INTEGER NOT NULL,
+			exerciseMode TEXT NOT NULL,
+			activeQuestionIds TEXT NOT NULL,
+			submitted INTEGER NOT NULL,
+			selectedAnswers TEXT NOT NULL
+		);
+	`;
+	console.log('[DB] Running auto-initialization schema...');
+	await db.exec(schema);
+	console.log('[DB] Auto-initialization schema completed successfully.');
+}
+
