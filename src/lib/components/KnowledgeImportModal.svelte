@@ -104,7 +104,7 @@
 		<!-- Header -->
 		<header class="relative z-10 flex justify-between items-center pb-4 border-b border-outline-variant/10 flex-shrink-0">
 			<div class="flex items-center gap-3">
-				<span class="material-symbols-outlined text-primary text-3xl animate-bounce">book_4_spark</span>
+				<span class="material-symbols-outlined text-primary text-3xl animate-bounce">auto_awesome</span>
 				<div>
 					<h2 class="font-headline-md text-headline-md text-on-surface font-extrabold">问答题库导入中心</h2>
 					<p class="text-on-surface-variant text-body-sm mt-0.5">支持批量上传 Markdown 文件或手动粘帖文本进行格式转化</p>

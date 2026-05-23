@@ -100,7 +100,7 @@
 	<div class="mb-8 z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
 		<div>
 			<div class="flex items-center gap-3 mb-2">
-				<span class="material-symbols-outlined text-primary text-3xl animate-pulse">book_4_spark</span>
+				<span class="material-symbols-outlined text-primary text-3xl animate-pulse">auto_awesome</span>
 				<h2 class="font-headline-xl text-headline-xl text-on-surface font-extrabold">知识问答</h2>
 			</div>
 			<p class="text-on-surface-variant text-body-lg max-w-xl">
