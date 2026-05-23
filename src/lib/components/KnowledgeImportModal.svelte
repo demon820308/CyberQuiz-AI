@@ -17,7 +17,7 @@
 	} = $props();
 
 	// Modal tabs: 'upload' | 'text'
-	let activeTab = $state<'upload' | 'text'>('upload');
+	let activeTab = $state<'upload' | 'text'>('text');
 
 	// Form values
 	let semester = $state(initialSemester);
@@ -182,20 +182,20 @@
 			<!-- Tabs selection -->
 			<div class="flex border-b border-outline-variant/10">
 				<button
-					onclick={() => activeTab = 'upload'}
-					class="px-5 py-2.5 text-xs font-bold border-b-2 transition-all flex items-center gap-1.5 cursor-pointer
-						{activeTab === 'upload' ? 'border-primary text-primary' : 'border-transparent text-on-surface-variant hover:text-primary'}"
-				>
-					<span class="material-symbols-outlined text-[16px]">upload_file</span>
-					文件上传
-				</button>
-				<button
 					onclick={() => activeTab = 'text'}
 					class="px-5 py-2.5 text-xs font-bold border-b-2 transition-all flex items-center gap-1.5 cursor-pointer
 						{activeTab === 'text' ? 'border-primary text-primary' : 'border-transparent text-on-surface-variant hover:text-primary'}"
 				>
 					<span class="material-symbols-outlined text-[16px]">keyboard</span>
 					手动文本录入
+				</button>
+				<button
+					onclick={() => activeTab = 'upload'}
+					class="px-5 py-2.5 text-xs font-bold border-b-2 transition-all flex items-center gap-1.5 cursor-pointer
+						{activeTab === 'upload' ? 'border-primary text-primary' : 'border-transparent text-on-surface-variant hover:text-primary'}"
+				>
+					<span class="material-symbols-outlined text-[16px]">upload_file</span>
+					文件上传
 				</button>
 			</div>
 
