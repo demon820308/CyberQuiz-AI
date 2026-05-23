@@ -329,3 +329,13 @@ export async function insertKnowledgeQuestionsBatch(
 	}
 }
 
+export async function deleteKnowledgeQuestion(db: D1Database, id: number): Promise<boolean> {
+	try {
+		await db.prepare('DELETE FROM knowledge_questions WHERE id = ?').bind(id).run();
+		return true;
+	} catch (e) {
+		console.error('[DB Error] deleteKnowledgeQuestion:', e);
+		throw e;
+	}
+}
+

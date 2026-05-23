@@ -144,6 +144,8 @@ class QuizStore {
 	isD1 = $state(false);
 	dbError = $state<string | null>(null);
 	hydrated = $state(false);
+	isAuthorizedToDelete = $state(false);
+	adminPassword = $state('');
 
 	// Global Toast State
 	toastMessage = $state<string | null>(null);
@@ -491,6 +493,33 @@ class QuizStore {
 		}
 
 		localStorage.setItem('cq_knowledge_questions', JSON.stringify(this.knowledgeQuestions));
+	}
+
+	async removeKnowledgeQuestion(id: number) {
+		if (!browser) return;
+
+		if (this.isD1 && !this.dbError) {
+			try {
+				const res = await fetch('/api/knowledge/delete', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ id, password: this.adminPassword })
+				});
+				if (!res.ok) {
+					const errData: any = await res.json().catch(() => ({}));
+					this.showToast(`云端删除失败: ${errData.error || '未知错误'}`, 'error');
+					return;
+				}
+			} catch (e) {
+				console.error('Failed to delete from D1:', e);
+				this.showToast('云端删除失败，网络请求异常！', 'error');
+				return;
+			}
+		}
+
+		this.knowledgeQuestions = this.knowledgeQuestions.filter(q => q.id !== id);
+		localStorage.setItem('cq_knowledge_questions', JSON.stringify(this.knowledgeQuestions));
+		this.showToast('已成功删除该问答题！', 'success');
 	}
 
 	initSession(mode: ExerciseMode = 'sequential') {

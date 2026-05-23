@@ -180,6 +180,27 @@
 			})
 			.join('');
 	}
+	let showDeleteConfirm = $state(false);
+	let questionIdToDelete = $state<number | null>(null);
+
+	function handleDeleteClick(id: number) {
+		questionIdToDelete = id;
+		showDeleteConfirm = true;
+	}
+
+	async function confirmDelete() {
+		if (questionIdToDelete !== null) {
+			const id = questionIdToDelete;
+			questionIdToDelete = null;
+			showDeleteConfirm = false;
+			await quizStore.removeKnowledgeQuestion(id);
+			
+			// Adjust current page if paginatedQuestions list becomes empty
+			if (paginatedQuestions().length === 0 && currentPage > 1) {
+				currentPage -= 1;
+			}
+		}
+	}
 </script>
 
 <svelte:head>
@@ -323,6 +344,17 @@
 							>
 								{q.difficulty === 'easy' ? '简单' : q.difficulty === 'medium' ? '中等' : '困难'}
 							</span>
+
+							{#if quizStore.isAuthorizedToDelete && quizStore.knowledgeQuestions.some(cq => cq.id === q.id)}
+								<!-- Trash Delete Button -->
+								<button
+									onclick={() => handleDeleteClick(q.id)}
+									class="p-1.5 rounded-lg border border-error/25 bg-error/5 text-error hover:bg-error/15 hover:border-error/50 hover:shadow-[0_0_12px_rgba(239,68,68,0.2)] transition-all active:scale-95 cursor-pointer flex items-center justify-center"
+									title="永久删除此问答题"
+								>
+									<span class="material-symbols-outlined text-[20px]">delete</span>
+								</button>
+							{/if}
 
 							<!-- Toggle expand action -->
 							<button
@@ -512,4 +544,34 @@
 		onConfirm={confirmKnowledgeImport}
 		onCancel={() => showKnowledgeImport = false}
 	/>
+{/if}
+
+{#if showDeleteConfirm}
+	<div class="fixed inset-0 z-[1000] flex items-center justify-center bg-[#0b1326]/85 backdrop-blur-md p-4 animate-in fade-in duration-300">
+		<div class="w-full max-w-sm glass-card rounded-3xl p-6 md:p-8 border border-error/30 cyber-glow-error text-center space-y-5 animate-in zoom-in-95 duration-300 relative overflow-hidden">
+			<!-- Decorative red glowing bubble -->
+			<div class="absolute -top-16 -right-16 w-32 h-32 bg-error/10 rounded-full blur-[40px] pointer-events-none"></div>
+
+			<span class="material-symbols-outlined text-error text-4xl animate-bounce">warning</span>
+			<div>
+				<h3 class="font-headline-sm text-headline-sm text-on-surface font-extrabold">确定要删除该问答题吗？</h3>
+				<p class="text-xs text-on-surface-variant mt-1.5 leading-relaxed">删除操作是永久性的，对应的云端 D1 数据库记录与本地缓存都将被物理销毁，且无法恢复！</p>
+			</div>
+			
+			<div class="flex justify-end gap-3 pt-2">
+				<button
+					onclick={() => { showDeleteConfirm = false; questionIdToDelete = null; }}
+					class="px-4 py-2.5 border border-outline-variant/30 text-on-surface hover:bg-surface-bright/10 text-xs font-bold rounded-xl transition-all cursor-pointer active:scale-95"
+				>
+					取消
+				</button>
+				<button
+					onclick={confirmDelete}
+					class="px-5 py-2.5 bg-error text-white text-xs font-bold rounded-xl hover:bg-error/80 transition-all cursor-pointer active:scale-95 shadow-md shadow-error/15"
+				>
+					确定删除
+				</button>
+			</div>
+		</div>
+	</div>
 {/if}
