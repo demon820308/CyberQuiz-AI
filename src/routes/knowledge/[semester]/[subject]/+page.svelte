@@ -314,16 +314,16 @@
 		</div>
 	{:else}
 		<!-- Q&A Questions List -->
-		<div class="space-y-4 z-10 mb-8">
+		<div class="space-y-3 z-10 mb-8">
 			{#each paginatedQuestions() as q, idx}
 				<div 
-					class="glass-panel rounded-3xl p-6 md:p-8 border border-outline-variant/10 hover:border-primary/20 bg-surface-container-low/30 transition-all duration-300 relative overflow-hidden"
+					class="glass-panel rounded-2xl p-5 md:p-6 border border-outline-variant/10 hover:border-primary/20 bg-surface-container-low/30 transition-all duration-300 relative overflow-hidden"
 				>
 					<!-- Glowing side anchor -->
 					<div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b {q.difficulty === 'easy' ? 'from-green-500 to-emerald-600' : q.difficulty === 'medium' ? 'from-primary to-secondary' : 'from-error to-pink-600'}"></div>
 					
 					<!-- Card Header Info -->
-					<div class="flex justify-between items-start flex-wrap gap-4 mb-4">
+					<div class="flex justify-between items-start flex-wrap gap-3 mb-3">
 						<div class="flex items-center gap-3">
 							<!-- Index Tag -->
 							<div class="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center font-bold font-code text-xs text-primary shadow-sm shrink-0">
@@ -370,13 +370,13 @@
 					</div>
 
 					<!-- Prompt Body -->
-					<div class="pl-0 md:pl-11 py-2 text-on-surface-variant text-body-sm whitespace-pre-line leading-relaxed font-semibold">
+					<div class="pl-0 md:pl-11 py-1 text-on-surface-variant text-body-sm whitespace-pre-line leading-relaxed font-semibold">
 						{@html formatParagraphs(q.content)}
 					</div>
 
 					<!-- Expanded Detailed Q&A Panel (Matches user's exact specification) -->
 					{#if expandedQuestionIds.has(q.id)}
-						<div class="pl-0 md:pl-11 mt-6 pt-6 border-t border-outline-variant/10 space-y-6 animate-in slide-in-from-top-4 duration-300">
+						<div class="pl-0 md:pl-11 mt-4 pt-4 border-t border-outline-variant/10 space-y-4 animate-in slide-in-from-top-4 duration-300">
 							
 							<!-- 1. 标准答案 (Standard Answer) -->
 							<div class="space-y-3 bg-[#10b981]/5 p-5 rounded-2xl border border-[#10b981]/15">
