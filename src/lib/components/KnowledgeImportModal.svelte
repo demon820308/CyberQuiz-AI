@@ -4,18 +4,24 @@
 
 	let {
 		onConfirm = () => {},
-		onCancel = () => {}
+		onCancel = () => {},
+		initialSemester = 'grade7_up',
+		initialSubject = 'ethics',
+		lockSelections = false
 	}: {
 		onConfirm: (questions: ParsedKnowledgeQuestion[], semester: string, subject: string) => void;
 		onCancel: () => void;
+		initialSemester?: string;
+		initialSubject?: string;
+		lockSelections?: boolean;
 	} = $props();
 
 	// Modal tabs: 'upload' | 'text'
 	let activeTab = $state<'upload' | 'text'>('upload');
 
 	// Form values
-	let semester = $state('grade7_up');
-	let subject = $state('ethics');
+	let semester = $state(initialSemester);
+	let subject = $state(initialSubject);
 	let difficulty = $state<'easy' | 'medium' | 'hard'>('medium');
 
 	// Parse states
@@ -120,11 +126,17 @@
 			<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
 				<!-- Semester -->
 				<div class="space-y-1.5">
-					<label for="import_sem" class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider font-code">目标学期</label>
+					<label for="import_sem" class="flex items-center gap-1 text-xs font-bold text-on-surface-variant uppercase tracking-wider font-code">
+						<span>目标学期</span>
+						{#if lockSelections}
+							<span class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1, 'wght' 600;">lock</span>
+						{/if}
+					</label>
 					<select
 						id="import_sem"
 						bind:value={semester}
-						class="w-full bg-[#0b1326]/60 border border-outline-variant/20 focus:border-primary rounded-xl px-4 py-2.5 text-xs text-on-surface outline-none transition-all"
+						disabled={lockSelections}
+						class="w-full bg-[#0b1326]/60 border border-outline-variant/20 focus:border-primary rounded-xl px-4 py-2.5 text-xs text-on-surface outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-container-low/20"
 					>
 						{#each semesters as s}
 							<option value={s.id} class="bg-[#0b1326]">{s.name}</option>
@@ -134,11 +146,17 @@
 
 				<!-- Subject -->
 				<div class="space-y-1.5">
-					<label for="import_sub" class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider font-code">导入科目</label>
+					<label for="import_sub" class="flex items-center gap-1 text-xs font-bold text-on-surface-variant uppercase tracking-wider font-code">
+						<span>导入科目</span>
+						{#if lockSelections}
+							<span class="material-symbols-outlined text-[14px] text-primary" style="font-variation-settings: 'FILL' 1, 'wght' 600;">lock</span>
+						{/if}
+					</label>
 					<select
 						id="import_sub"
 						bind:value={subject}
-						class="w-full bg-[#0b1326]/60 border border-outline-variant/20 focus:border-primary rounded-xl px-4 py-2.5 text-xs text-on-surface outline-none transition-all"
+						disabled={lockSelections}
+						class="w-full bg-[#0b1326]/60 border border-outline-variant/20 focus:border-primary rounded-xl px-4 py-2.5 text-xs text-on-surface outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-container-low/20"
 					>
 						{#each subjects as sub}
 							<option value={sub.id} class="bg-[#0b1326]">{sub.name}</option>

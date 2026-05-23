@@ -506,6 +506,9 @@
 
 {#if showKnowledgeImport}
 	<KnowledgeImportModal
+		initialSemester={semesterId}
+		initialSubject={subjectId}
+		lockSelections={true}
 		onConfirm={confirmKnowledgeImport}
 		onCancel={() => showKnowledgeImport = false}
 	/>
