@@ -123,31 +123,37 @@
 			class="transition-colors font-label-md text-label-md pb-1 {page.url.pathname === '/' ? 'text-primary font-bold border-b-2 border-primary' : 'text-on-surface-variant hover:text-primary'}"
 			href="/"
 		>
-			Dashboard
+			首页
 		</a>
 		<a
 			class="transition-colors font-label-md text-label-md pb-1 {page.url.pathname === '/quiz' ? 'text-primary font-bold border-b-2 border-primary' : 'text-on-surface-variant hover:text-primary'}"
 			href="/quiz"
 		>
-			Library / Study
+			答题
+		</a>
+		<a
+			class="transition-colors font-label-md text-label-md pb-1 {page.url.pathname.startsWith('/knowledge') ? 'text-primary font-bold border-b-2 border-primary' : 'text-on-surface-variant hover:text-primary'}"
+			href="/knowledge"
+		>
+			知识问答
 		</a>
 		<a
 			class="transition-colors font-label-md text-label-md pb-1 {page.url.pathname === '/wrong' ? 'text-primary font-bold border-b-2 border-primary' : 'text-on-surface-variant hover:text-primary'}"
 			href="/wrong"
 		>
-			Wrong Book
+			错题本
 		</a>
 		<a
 			class="transition-colors font-label-md text-label-md pb-1 {page.url.pathname === '/analysis' ? 'text-primary font-bold border-b-2 border-primary' : 'text-on-surface-variant hover:text-primary'}"
 			href="/analysis"
 		>
-			Analytics
+			题库分析
 		</a>
 		<a
 			class="transition-colors font-label-md text-label-md pb-1 {page.url.pathname === '/assistant' ? 'text-primary font-bold border-b-2 border-primary' : 'text-on-surface-variant hover:text-primary'}"
 			href="/assistant"
 		>
-			AI Assistant
+			AI助理
 		</a>
 	</nav>
 
@@ -230,14 +236,14 @@
 
 <!-- Bottom Navigation Shell (Mobile Only) -->
 <nav
-	class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 bg-surface-container-lowest/90 backdrop-blur-2xl border-t border-outline-variant/10 shadow-[0_-4px_20px_rgba(0,0,0,0.4)] rounded-t-xl"
+	class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-1 py-3 bg-surface-container-lowest/90 backdrop-blur-2xl border-t border-outline-variant/10 shadow-[0_-4px_20px_rgba(0,0,0,0.4)] rounded-t-xl"
 >
 	<a
 		href="/"
 		class="flex flex-col items-center justify-center {page.url.pathname === '/' ? 'text-primary bg-primary-container/10 rounded-xl px-2 py-1 shadow-[0_0_15px_rgba(192,193,255,0.2)]' : 'text-on-surface-variant'}"
 	>
 		<span class="material-symbols-outlined" style={page.url.pathname === '/' ? "font-variation-settings: 'FILL' 1;" : ""}>home</span>
-		<span class="font-label-md text-xs mt-0.5">Home</span>
+		<span class="font-label-md text-xs mt-0.5">首页</span>
 	</a>
 	
 	<a
@@ -245,7 +251,15 @@
 		class="flex flex-col items-center justify-center {page.url.pathname === '/quiz' ? 'text-primary bg-primary-container/10 rounded-xl px-2 py-1 shadow-[0_0_15px_rgba(192,193,255,0.2)]' : 'text-on-surface-variant'}"
 	>
 		<span class="material-symbols-outlined" style={page.url.pathname === '/quiz' ? "font-variation-settings: 'FILL' 1;" : ""}>school</span>
-		<span class="font-label-md text-xs mt-0.5">Study</span>
+		<span class="font-label-md text-xs mt-0.5">答题</span>
+	</a>
+
+	<a
+		href="/knowledge"
+		class="flex flex-col items-center justify-center {page.url.pathname.startsWith('/knowledge') ? 'text-primary bg-primary-container/10 rounded-xl px-2 py-1 shadow-[0_0_15px_rgba(192,193,255,0.2)]' : 'text-on-surface-variant'}"
+	>
+		<span class="material-symbols-outlined" style={page.url.pathname.startsWith('/knowledge') ? "font-variation-settings: 'FILL' 1;" : ""}>book_4_spark</span>
+		<span class="font-label-md text-xs mt-0.5">问答</span>
 	</a>
 	
 	<a
@@ -253,7 +267,7 @@
 		class="flex flex-col items-center justify-center {page.url.pathname === '/wrong' ? 'text-primary bg-primary-container/10 rounded-xl px-2 py-1 shadow-[0_0_15px_rgba(192,193,255,0.2)]' : 'text-on-surface-variant'}"
 	>
 		<span class="material-symbols-outlined" style={page.url.pathname === '/wrong' ? "font-variation-settings: 'FILL' 1;" : ""}>menu_book</span>
-		<span class="font-label-md text-xs mt-0.5">Wrongs</span>
+		<span class="font-label-md text-xs mt-0.5">错题本</span>
 	</a>
 	
 	<a
@@ -261,7 +275,7 @@
 		class="flex flex-col items-center justify-center {page.url.pathname === '/analysis' ? 'text-primary bg-primary-container/10 rounded-xl px-2 py-1 shadow-[0_0_15px_rgba(192,193,255,0.2)]' : 'text-on-surface-variant'}"
 	>
 		<span class="material-symbols-outlined" style={page.url.pathname === '/analysis' ? "font-variation-settings: 'FILL' 1;" : ""}>insights</span>
-		<span class="font-label-md text-xs mt-0.5">Stats</span>
+		<span class="font-label-md text-xs mt-0.5">分析</span>
 	</a>
 
 	<a
