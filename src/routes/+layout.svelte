@@ -241,16 +241,14 @@
 		</div>
 
 		<div class="flex gap-1 md:gap-2">
-			{#if page.url.pathname === '/'}
-				<!-- Admin Password Lock Button -->
-				<button
-					onclick={openPasswordPrompt}
-					class="p-2 rounded-full transition-all flex items-center justify-center w-10 h-10 border border-outline-variant/15 {quizStore.isAuthorizedToDelete ? 'text-primary bg-primary/10 border-primary/30' : 'text-on-surface-variant hover:bg-surface-bright/10 hover:border-outline-variant/30'}"
-					title={quizStore.isAuthorizedToDelete ? "管理员已解锁 (点击退出授权)" : "管理员授权解锁"}
-				>
-					<span class="material-symbols-outlined text-[20px] transition-all duration-300 {quizStore.isAuthorizedToDelete ? 'text-primary animate-pulse' : 'text-on-surface-variant'}" style={quizStore.isAuthorizedToDelete ? "font-variation-settings: 'FILL' 1;" : ""}>passkey</span>
-				</button>
-			{/if}
+			<!-- Admin Password Lock Button -->
+			<button
+				onclick={openPasswordPrompt}
+				class="p-2 rounded-full transition-all flex items-center justify-center w-10 h-10 border border-outline-variant/15 {quizStore.isAuthorizedToDelete ? 'text-primary bg-primary/10 border-primary/30' : 'text-on-surface-variant hover:bg-surface-bright/10 hover:border-outline-variant/30'}"
+				title={quizStore.isAuthorizedToDelete ? "管理员已解锁 (点击退出授权)" : "管理员授权解锁"}
+			>
+				<span class="material-symbols-outlined text-[20px] transition-all duration-300 {quizStore.isAuthorizedToDelete ? 'text-primary animate-pulse' : 'text-on-surface-variant'}" style={quizStore.isAuthorizedToDelete ? "font-variation-settings: 'FILL' 1;" : ""}>passkey</span>
+			</button>
 			<button class="p-2 text-on-surface-variant hover:bg-surface-bright/10 rounded-full transition-all">
 				<span class="material-symbols-outlined">notifications</span>
 			</button>
