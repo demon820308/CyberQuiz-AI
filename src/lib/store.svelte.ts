@@ -141,6 +141,7 @@ class QuizStore {
 	} | null>(null);
 	isD1 = $state(false);
 	dbError = $state<string | null>(null);
+	hydrated = $state(false);
 
 	// Global Toast State
 	toastMessage = $state<string | null>(null);
@@ -223,6 +224,7 @@ class QuizStore {
 		} else {
 			this.loadFromStorage();
 		}
+		this.hydrated = true;
 	}
 
 	loadFromStorage() {
@@ -369,6 +371,12 @@ class QuizStore {
 
 			// Reconstruct active questions list using saved IDs
 			const idSet = new Set(progress.activeQuestionIds);
+
+			// If questions are not loaded yet, wait. Do NOT clear progress.
+			if (this.questions.length === 0) {
+				return false;
+			}
+
 			const matchingQuestions = this.questions.filter(q => idSet.has(q.id));
 
 			// Keep the exact same order as saved IDs
@@ -379,7 +387,11 @@ class QuizStore {
 			});
 
 			if (orderedQuestions.length === 0) {
-				this.clearSessionProgress();
+				// Only clear progress if we are fully hydrated and have actual questions,
+				// meaning we know for sure that these saved question IDs are invalid/deleted.
+				if (!this.isD1 || this.hydrated) {
+					this.clearSessionProgress();
+				}
 				return false;
 			}
 

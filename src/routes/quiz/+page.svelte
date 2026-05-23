@@ -1,16 +1,19 @@
 <script lang="ts">
 	import { quizStore } from '$lib/store.svelte';
 	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
+	import { untrack } from 'svelte';
 
-	onMount(() => {
-		// If page is refreshed and active questions are empty, check if we have saved progress
-		if (quizStore.activeQuestions.length === 0) {
-			if (quizStore.hasSavedProgress) {
-				quizStore.resumeSessionProgress();
-			} else {
-				quizStore.initSession('sequential');
-			}
+	$effect(() => {
+		// Only run when the store's hydration status is ready
+		const isReady = quizStore.isD1 ? quizStore.hydrated : true;
+		if (isReady && quizStore.activeQuestions.length === 0) {
+			untrack(() => {
+				if (quizStore.hasSavedProgress) {
+					quizStore.resumeSessionProgress();
+				} else {
+					quizStore.initSession('sequential');
+				}
+			});
 		}
 	});
 
