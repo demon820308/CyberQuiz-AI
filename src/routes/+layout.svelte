@@ -181,7 +181,7 @@
 			class="transition-colors font-label-md text-label-md pb-1 {page.url.pathname.startsWith('/knowledge') ? 'text-primary font-bold border-b-2 border-primary' : 'text-on-surface-variant hover:text-primary'}"
 			href="/knowledge"
 		>
-			知识问答
+			知识问答题
 		</a>
 		<a
 			class="transition-colors font-label-md text-label-md pb-1 {page.url.pathname === '/wrong' ? 'text-primary font-bold border-b-2 border-primary' : 'text-on-surface-variant hover:text-primary'}"
@@ -206,23 +206,39 @@
 	<div class="flex items-center gap-4">
 		<!-- Desktop Buttons -->
 		<div class="hidden md:flex items-center gap-2">
+			<!-- Knowledge Q&A Shortcut Button -->
+			<a
+				href="/knowledge"
+				class="flex items-center gap-2 bg-secondary-container/20 border border-secondary/30 text-secondary px-4 py-2 rounded-xl hover:bg-secondary-container/30 transition-all duration-300 active:scale-95"
+			>
+				<span class="material-symbols-outlined text-[20px]">book_4_spark</span>
+				<span class="font-label-md text-label-md">知识问答题</span>
+			</a>
+
 			<!-- Upload Button -->
 			<button
 				onclick={triggerUpload}
 				class="flex items-center gap-2 bg-primary-container/20 border border-primary/30 text-primary px-4 py-2 rounded-xl hover:bg-primary-container/30 transition-all duration-300 active:scale-95"
 			>
 				<span class="material-symbols-outlined text-[20px]">upload_file</span>
-				<span class="font-label-md text-label-md">Upload .md</span>
+				<span class="font-label-md text-label-md">答题库上传MD</span>
 			</button>
 
 		</div>
 
 		<!-- Mobile Buttons -->
 		<div class="flex md:hidden items-center gap-1">
+			<a
+				href="/knowledge"
+				class="p-2 text-secondary hover:bg-surface-bright/10 rounded-full transition-all"
+				title="知识问答题"
+			>
+				<span class="material-symbols-outlined">book_4_spark</span>
+			</a>
 			<button
 				onclick={triggerUpload}
 				class="p-2 text-primary hover:bg-surface-bright/10 rounded-full transition-all"
-				title="Upload .md"
+				title="答题库上传MD"
 			>
 				<span class="material-symbols-outlined">upload_file</span>
 			</button>
@@ -315,7 +331,7 @@
 		class="flex flex-col items-center justify-center {page.url.pathname.startsWith('/knowledge') ? 'text-primary bg-primary-container/10 rounded-xl px-2 py-1 shadow-[0_0_15px_rgba(192,193,255,0.2)]' : 'text-on-surface-variant'}"
 	>
 		<span class="material-symbols-outlined" style={page.url.pathname.startsWith('/knowledge') ? "font-variation-settings: 'FILL' 1;" : ""}>book_4_spark</span>
-		<span class="font-label-md text-xs mt-0.5">问答</span>
+		<span class="font-label-md text-xs mt-0.5">知识问答</span>
 	</a>
 	
 	<a
