@@ -2,6 +2,7 @@
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { getKnowledgeQuestions, type KnowledgeQuestion } from '$lib/data/knowledgeQuestions';
+	import { quizStore } from '$lib/store.svelte';
 
 	const semesterId = $derived(page.params.semester || '');
 	const subjectId = $derived(page.params.subject || '');
@@ -34,10 +35,31 @@
 	// Expanded question IDs state
 	let expandedQuestionIds = $state<Set<number>>(new Set());
 
-	// Computed questions
-	let allMatchingQuestions = $derived(
-		getKnowledgeQuestions(semesterId, subjectId, searchQuery, activeDifficulty)
-	);
+	// Computed questions - custom questions filtered reactively
+	let customMatchingQuestions = $derived(() => {
+		let filtered = quizStore.knowledgeQuestions.filter(
+			q => q.semester === semesterId && q.subject === subjectId
+		);
+		if (searchQuery && searchQuery.trim()) {
+			const q = searchQuery.trim().toLowerCase();
+			filtered = filtered.filter(
+				item =>
+					item.tag.toLowerCase().includes(q) ||
+					item.content.toLowerCase().includes(q) ||
+					item.keywords.some(k => k.toLowerCase().includes(q))
+			);
+		}
+		if (activeDifficulty && activeDifficulty !== 'all') {
+			filtered = filtered.filter(item => item.difficulty === activeDifficulty);
+		}
+		return filtered;
+	});
+
+	// Computed questions - combining custom and static questions
+	let allMatchingQuestions = $derived([
+		...customMatchingQuestions(),
+		...getKnowledgeQuestions(semesterId, subjectId, searchQuery, activeDifficulty)
+	]);
 
 	// Pagination parameters
 	const pageSize = 8;

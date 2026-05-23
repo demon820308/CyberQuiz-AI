@@ -1,5 +1,6 @@
 import { browser } from '$app/environment';
 import type { Question, ExerciseMode, WrongRecord, QuizHistory, SessionProgress } from './types';
+import type { KnowledgeQuestion } from './data/knowledgeQuestions';
 import { parseMarkdown } from './utils/mdParser';
 
 // Default Python questions with enhanced tags
@@ -123,6 +124,7 @@ class QuizStore {
 	questions = $state<Question[]>([]);
 	wrongBook = $state<WrongRecord[]>([]);
 	history = $state<QuizHistory[]>([]);
+	knowledgeQuestions = $state<KnowledgeQuestion[]>([]);
 
 	// Current quiz session state
 	currentIndex = $state(0);
@@ -264,6 +266,19 @@ class QuizStore {
 				console.error('Failed to parse history', e);
 				this.history = [];
 			}
+		}
+
+		// Load knowledge questions
+		const savedKQ = localStorage.getItem('cq_knowledge_questions');
+		if (savedKQ) {
+			try {
+				this.knowledgeQuestions = JSON.parse(savedKQ);
+			} catch (e) {
+				console.error('Failed to parse saved knowledge questions', e);
+				this.knowledgeQuestions = [];
+			}
+		} else {
+			this.knowledgeQuestions = [];
 		}
 
 		// Check saved session progress
@@ -443,6 +458,17 @@ class QuizStore {
 		this.initSession(this.exerciseMode);
 		this.clearSessionProgress();
 		this.showToast(`成功合并导入 ${toAdd.length} 道道德与法治题目！`, 'success');
+	}
+
+	addKnowledgeQuestions(newQuestions: Omit<KnowledgeQuestion, 'id'>[]) {
+		if (!browser) return;
+		const maxId = this.knowledgeQuestions.reduce((max, q) => Math.max(max, q.id), 0);
+		const mapped = newQuestions.map((q, idx) => ({
+			...q,
+			id: maxId + idx + 1
+		})) as KnowledgeQuestion[];
+		this.knowledgeQuestions = [...this.knowledgeQuestions, ...mapped];
+		localStorage.setItem('cq_knowledge_questions', JSON.stringify(this.knowledgeQuestions));
 	}
 
 	initSession(mode: ExerciseMode = 'sequential') {
