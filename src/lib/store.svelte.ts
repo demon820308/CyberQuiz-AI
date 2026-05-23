@@ -284,6 +284,24 @@ class QuizStore {
 			this.knowledgeQuestions = [];
 		}
 
+		// Restore admin authorization state (with 24h expiry)
+		const savedAuth = localStorage.getItem('cq_admin_auth');
+		if (savedAuth) {
+			try {
+				const authData = JSON.parse(savedAuth);
+				if (authData.exp && Date.now() < authData.exp) {
+					this.isAuthorizedToDelete = true;
+				} else {
+					// Expired — clean up
+					localStorage.removeItem('cq_admin_auth');
+					this.isAuthorizedToDelete = false;
+				}
+			} catch {
+				localStorage.removeItem('cq_admin_auth');
+				this.isAuthorizedToDelete = false;
+			}
+		}
+
 		// Check saved session progress
 		const savedProgress = localStorage.getItem('cq_session_progress');
 		if (savedProgress) {

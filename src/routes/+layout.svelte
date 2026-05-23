@@ -81,6 +81,7 @@
 		if (quizStore.isAuthorizedToDelete) {
 			quizStore.isAuthorizedToDelete = false;
 			quizStore.adminPassword = '';
+			localStorage.removeItem('cq_admin_auth');
 			quizStore.showToast('已安全退出管理员授权状态', 'success');
 		} else {
 			enteredPassword = '';
@@ -104,8 +105,13 @@
 			if (verifyResult.success) {
 				quizStore.isAuthorizedToDelete = true;
 				quizStore.adminPassword = enteredPassword;
+				// Persist auth state for 24 hours
+				localStorage.setItem('cq_admin_auth', JSON.stringify({
+					v: 1,
+					exp: Date.now() + 24 * 60 * 60 * 1000
+				}));
 				showPasswordPrompt = false;
-				quizStore.showToast('管理员权限解锁成功！', 'success');
+				quizStore.showToast('管理员权限解锁成功！24小时内免验证', 'success');
 			} else {
 				quizStore.showToast(verifyResult.error || '密码验证失败', 'error');
 			}
