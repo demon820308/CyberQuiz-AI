@@ -260,7 +260,15 @@ export async function initializeDatabase(db: D1Database): Promise<void> {
 		);
 	`;
 	console.log('[DB] Running auto-initialization schema...');
-	await db.exec(schema);
+	// Split by semicolon and trim to run each statement separately to avoid CRLF/newline parser bugs in Cloudflare D1
+	const statements = schema
+		.split(';')
+		.map(s => s.trim())
+		.filter(s => s.length > 0);
+
+	for (const statement of statements) {
+		await db.exec(statement);
+	}
 	console.log('[DB] Auto-initialization schema completed successfully.');
 }
 
