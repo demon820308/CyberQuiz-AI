@@ -177,12 +177,7 @@
 		>
 			答题
 		</a>
-		<a
-			class="transition-colors font-label-md text-label-md pb-1 {page.url.pathname.startsWith('/knowledge') ? 'text-primary font-bold border-b-2 border-primary' : 'text-on-surface-variant hover:text-primary'}"
-			href="/knowledge"
-		>
-			知识问答题
-		</a>
+
 		<a
 			class="transition-colors font-label-md text-label-md pb-1 {page.url.pathname === '/wrong' ? 'text-primary font-bold border-b-2 border-primary' : 'text-on-surface-variant hover:text-primary'}"
 			href="/wrong"
@@ -326,13 +321,7 @@
 		<span class="font-label-md text-xs mt-0.5">答题</span>
 	</a>
 
-	<a
-		href="/knowledge"
-		class="flex flex-col items-center justify-center {page.url.pathname.startsWith('/knowledge') ? 'text-primary bg-primary-container/10 rounded-xl px-2 py-1 shadow-[0_0_15px_rgba(192,193,255,0.2)]' : 'text-on-surface-variant'}"
-	>
-		<span class="material-symbols-outlined" style={page.url.pathname.startsWith('/knowledge') ? "font-variation-settings: 'FILL' 1;" : ""}>book_4_spark</span>
-		<span class="font-label-md text-xs mt-0.5">知识问答</span>
-	</a>
+
 	
 	<a
 		href="/wrong"
