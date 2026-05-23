@@ -1,6 +1,6 @@
 import { browser } from '$app/environment';
 import type { Question, ExerciseMode, WrongRecord, QuizHistory, SessionProgress } from './types';
-import type { KnowledgeQuestion } from './data/knowledgeQuestions';
+import { type KnowledgeQuestion, knowledgeQuestions as defaultKnowledgeQuestions } from './data/knowledgeQuestions';
 import { parseMarkdown } from './utils/mdParser';
 
 // Default Python questions with enhanced tags
@@ -192,7 +192,28 @@ class QuizStore {
 
 			this.wrongBook = data.wrongBook || [];
 			this.history = data.history || [];
-			this.knowledgeQuestions = data.knowledgeQuestions || [];
+			
+			if (data.knowledgeQuestions && data.knowledgeQuestions.length > 0) {
+				this.knowledgeQuestions = data.knowledgeQuestions;
+			} else {
+				// Seed default knowledge questions to D1
+				this.knowledgeQuestions = [...defaultKnowledgeQuestions];
+				if (this.isD1 && !this.dbError) {
+					try {
+						const res = await fetch('/api/knowledge', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify(defaultKnowledgeQuestions.map(({ id, ...q }) => q))
+						});
+						if (!res.ok) {
+							const errData: any = await res.json().catch(() => ({}));
+							console.error('Failed to seed default knowledge questions to D1:', errData.error || res.statusText);
+						}
+					} catch (e) {
+						console.error('Failed to seed default knowledge questions to D1:', e);
+					}
+				}
+			}
 
 			// Hydrate session progress if exists
 			if (data.progress) {
@@ -278,10 +299,12 @@ class QuizStore {
 				this.knowledgeQuestions = JSON.parse(savedKQ);
 			} catch (e) {
 				console.error('Failed to parse saved knowledge questions', e);
-				this.knowledgeQuestions = [];
+				this.knowledgeQuestions = [...defaultKnowledgeQuestions];
+				localStorage.setItem('cq_knowledge_questions', JSON.stringify(this.knowledgeQuestions));
 			}
 		} else {
-			this.knowledgeQuestions = [];
+			this.knowledgeQuestions = [...defaultKnowledgeQuestions];
+			localStorage.setItem('cq_knowledge_questions', JSON.stringify(this.knowledgeQuestions));
 		}
 
 		// Restore admin authorization state (with 24h expiry)

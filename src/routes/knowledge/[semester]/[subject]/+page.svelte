@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
-	import { getKnowledgeQuestions, type KnowledgeQuestion } from '$lib/data/knowledgeQuestions';
 	import { quizStore } from '$lib/store.svelte';
 	import KnowledgeImportModal from '$lib/components/KnowledgeImportModal.svelte';
 
@@ -49,31 +48,22 @@
 	// Expanded question IDs state
 	let expandedQuestionIds = $state<Set<number>>(new Set());
 
-	// Computed questions - custom questions filtered reactively
-	let customMatchingQuestions = $derived(() => {
-		let filtered = quizStore.knowledgeQuestions.filter(
-			q => q.semester === semesterId && q.subject === subjectId
-		);
-		if (searchQuery && searchQuery.trim()) {
-			const q = searchQuery.trim().toLowerCase();
-			filtered = filtered.filter(
-				item =>
-					item.tag.toLowerCase().includes(q) ||
+	// Computed questions filtered reactively
+	let allMatchingQuestions = $derived(
+		quizStore.knowledgeQuestions
+			.filter(q => q.semester === semesterId && q.subject === subjectId)
+			.filter(item => {
+				if (!searchQuery || !searchQuery.trim()) return true;
+				const q = searchQuery.trim().toLowerCase();
+				return item.tag.toLowerCase().includes(q) ||
 					item.content.toLowerCase().includes(q) ||
-					item.keywords.some(k => k.toLowerCase().includes(q))
-			);
-		}
-		if (activeDifficulty && activeDifficulty !== 'all') {
-			filtered = filtered.filter(item => item.difficulty === activeDifficulty);
-		}
-		return filtered;
-	});
-
-	// Computed questions - combining custom and static questions
-	let allMatchingQuestions = $derived([
-		...customMatchingQuestions(),
-		...getKnowledgeQuestions(semesterId, subjectId, searchQuery, activeDifficulty)
-	]);
+					item.keywords.some(k => k.toLowerCase().includes(q));
+			})
+			.filter(item => {
+				if (!activeDifficulty || activeDifficulty === 'all') return true;
+				return item.difficulty === activeDifficulty;
+			})
+	);
 
 	// Pagination parameters
 	const pageSize = 8;
