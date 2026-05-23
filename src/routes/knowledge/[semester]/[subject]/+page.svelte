@@ -320,7 +320,7 @@
 								{(currentPage - 1) * pageSize + idx + 1}
 							</div>
 							<!-- Subject Category Tag -->
-							<span class="text-[13px] font-extrabold text-[#38bdf8] text-glow-primary">
+							<span class="text-[14px] font-extrabold text-[#38bdf8] text-glow-primary">
 								{q.tag}
 							</span>
 						</div>
@@ -360,7 +360,7 @@
 					</div>
 
 					<!-- Prompt Body -->
-					<div class="pl-0 md:pl-11 py-1 text-on-surface-variant text-[13px] whitespace-pre-line leading-relaxed font-semibold">
+					<div class="pl-0 md:pl-11 py-1 text-on-surface-variant text-[14px] whitespace-pre-line leading-relaxed font-semibold">
 						{@html formatParagraphs(q.content)}
 					</div>
 
