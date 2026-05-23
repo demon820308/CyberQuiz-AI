@@ -105,9 +105,10 @@
 			if (verifyResult.success) {
 				quizStore.isAuthorizedToDelete = true;
 				quizStore.adminPassword = enteredPassword;
-				// Persist auth state for 24 hours
+				// Persist auth state + password for 24 hours
 				localStorage.setItem('cq_admin_auth', JSON.stringify({
 					v: 1,
+					pw: enteredPassword,
 					exp: Date.now() + 24 * 60 * 60 * 1000
 				}));
 				showPasswordPrompt = false;

@@ -291,14 +291,18 @@ class QuizStore {
 				const authData = JSON.parse(savedAuth);
 				if (authData.exp && Date.now() < authData.exp) {
 					this.isAuthorizedToDelete = true;
+					// Also restore the password so delete API calls still work
+					if (authData.pw) this.adminPassword = authData.pw;
 				} else {
 					// Expired — clean up
 					localStorage.removeItem('cq_admin_auth');
 					this.isAuthorizedToDelete = false;
+					this.adminPassword = '';
 				}
 			} catch {
 				localStorage.removeItem('cq_admin_auth');
 				this.isAuthorizedToDelete = false;
+				this.adminPassword = '';
 			}
 		}
 
