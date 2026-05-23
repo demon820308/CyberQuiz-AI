@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
+	import { quizStore } from '$lib/store.svelte';
 
 	const semesterId = $derived(page.params.semester || '');
 
@@ -19,7 +20,6 @@
 		id: string;
 		name: string;
 		desc: string;
-		questionCount: number;
 		icon: string;
 		gradient: string;
 		glowColor: string;
@@ -31,7 +31,6 @@
 			id: 'ethics',
 			name: '道德与法治',
 			desc: '树立正确价值观，培养法治意识',
-			questionCount: 356,
 			icon: 'gavel',
 			gradient: 'from-indigo-600/30 to-purple-500/20',
 			glowColor: 'shadow-indigo-500/10 border-indigo-500/30',
@@ -41,7 +40,6 @@
 			id: 'history',
 			name: '历史',
 			desc: '探索历史脉络，启迪智慧人生',
-			questionCount: 342,
 			icon: 'account_balance',
 			gradient: 'from-cyan-600/30 to-blue-500/20',
 			glowColor: 'shadow-cyan-500/10 border-cyan-500/30',
@@ -51,7 +49,6 @@
 			id: 'geography',
 			name: '地理',
 			desc: '认识世界格局，探索地理奥秘',
-			questionCount: 328,
 			icon: 'public',
 			gradient: 'from-blue-600/30 to-teal-500/20',
 			glowColor: 'shadow-blue-500/10 border-blue-500/30',
@@ -61,13 +58,19 @@
 			id: 'biology',
 			name: '生物',
 			desc: '探索生命科学，了解生命奥秘',
-			questionCount: 318,
 			icon: 'biotech',
 			gradient: 'from-purple-600/30 to-rose-500/20',
 			glowColor: 'shadow-purple-500/10 border-purple-500/30',
 			iconColor: 'text-purple-400'
 		}
 	];
+
+	// Dynamically count questions per subject within the current semester
+	function getSubjectCount(subjectId: string): number {
+		return quizStore.knowledgeQuestions.filter(
+			q => q.semester === semesterId && q.subject === subjectId
+		).length;
+	}
 
 	function goBack() {
 		goto('/knowledge');
@@ -147,7 +150,7 @@
 						<!-- Question counts info -->
 						<div class="inline-flex items-center gap-1.5 text-xs text-on-surface-variant font-code bg-surface-container-lowest/80 px-3 py-1 rounded-xl border border-outline-variant/10">
 							<span class="material-symbols-outlined text-[15px] text-primary">description</span>
-							<span>题目数量: <strong class="text-primary font-bold">{sub.questionCount} 题</strong></span>
+							<span>已导入: <strong class="text-primary font-bold">{getSubjectCount(sub.id)} 题</strong></span>
 						</div>
 					</div>
 				</div>

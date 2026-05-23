@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { quizStore } from '$lib/store.svelte';
 
 	interface SemesterCard {
 		id: string;
 		grade: string;
 		term: string;
 		desc: string;
-		questionCount: number;
-		kpCount: number;
 		icon: string;
 		gradient: string;
 		glowColor: string;
@@ -20,8 +19,6 @@
 			grade: '七年级',
 			term: '上学期',
 			desc: '同步知识问答题，夯实基础 · 稳步提升',
-			questionCount: 352,
-			kpCount: 68,
 			icon: 'menu_book',
 			gradient: 'from-blue-600/20 to-cyan-500/20',
 			glowColor: 'shadow-blue-500/10 border-blue-500/30',
@@ -32,8 +29,6 @@
 			grade: '七年级',
 			term: '下学期',
 			desc: '同步知识问答题，查漏补缺 · 巩固提高',
-			questionCount: 324,
-			kpCount: 63,
 			icon: 'trending_up',
 			gradient: 'from-purple-600/20 to-indigo-500/20',
 			glowColor: 'shadow-purple-500/10 border-purple-500/30',
@@ -44,8 +39,6 @@
 			grade: '八年级',
 			term: '上学期',
 			desc: '同步知识问答题，系统学习 · 能力进阶',
-			questionCount: 368,
-			kpCount: 72,
 			icon: 'science',
 			gradient: 'from-cyan-600/20 to-teal-500/20',
 			glowColor: 'shadow-cyan-500/10 border-cyan-500/30',
@@ -56,8 +49,6 @@
 			grade: '八年级',
 			term: '下学期',
 			desc: '同步知识问答题，综合运用 · 冲刺提优',
-			questionCount: 342,
-			kpCount: 71,
 			icon: 'architecture',
 			gradient: 'from-amber-600/20 to-orange-500/20',
 			glowColor: 'shadow-amber-500/10 border-amber-500/30',
@@ -68,8 +59,6 @@
 			grade: '九年级',
 			term: '上学期',
 			desc: '同步知识问答题，中考导向 · 专项突破',
-			questionCount: 356,
-			kpCount: 75,
 			icon: 'target',
 			gradient: 'from-fuchsia-600/20 to-pink-500/20',
 			glowColor: 'shadow-fuchsia-500/10 border-fuchsia-500/30',
@@ -80,14 +69,17 @@
 			grade: '九年级',
 			term: '下学期',
 			desc: '同步知识问答题，考前冲刺 · 精准提分',
-			questionCount: 334,
-			kpCount: 70,
 			icon: 'rocket_launch',
 			gradient: 'from-rose-600/20 to-red-500/20',
 			glowColor: 'shadow-rose-500/10 border-rose-500/30',
 			iconColor: 'text-rose-400'
 		}
 	];
+
+	// Dynamically count actual questions per semester from store
+	function getCount(semId: string): number {
+		return quizStore.knowledgeQuestions.filter(q => q.semester === semId).length;
+	}
 
 	function selectSemester(id: string) {
 		goto(`/knowledge/${id}`);
@@ -150,11 +142,7 @@
 					<div class="flex gap-4">
 						<div class="flex items-center gap-1.5 text-xs text-on-surface-variant font-code">
 							<span class="material-symbols-outlined text-[16px] text-primary">description</span>
-							<span>题目数量: <strong class="text-on-surface">{sem.questionCount} 题</strong></span>
-						</div>
-						<div class="flex items-center gap-1.5 text-xs text-on-surface-variant font-code">
-							<span class="material-symbols-outlined text-[16px] text-secondary">tips_and_updates</span>
-							<span>知识点: <strong class="text-on-surface">{sem.kpCount} 个</strong></span>
+							<span>已导入: <strong class="text-on-surface">{getCount(sem.id)} 题</strong></span>
 						</div>
 					</div>
 
