@@ -3,9 +3,23 @@
 	import { goto } from '$app/navigation';
 	import { getKnowledgeQuestions, type KnowledgeQuestion } from '$lib/data/knowledgeQuestions';
 	import { quizStore } from '$lib/store.svelte';
+	import KnowledgeImportModal from '$lib/components/KnowledgeImportModal.svelte';
 
 	const semesterId = $derived(page.params.semester || '');
 	const subjectId = $derived(page.params.subject || '');
+
+	let showKnowledgeImport = $state(false);
+
+	function confirmKnowledgeImport(questions: any[], semester: string, subject: string) {
+		quizStore.addKnowledgeQuestions(questions.map(q => ({
+			...q,
+			semester,
+			subject
+		})));
+		showKnowledgeImport = false;
+		quizStore.showToast(`成功导入 ${questions.length} 道知识问答题！`, 'success');
+		resetPagination();
+	}
 
 	const semesterNames: Record<string, string> = {
 		grade7_up: '七年级上学期',
@@ -256,6 +270,15 @@
 					困难
 				</button>
 			</div>
+
+			<!-- Q&A Import button -->
+			<button
+				onclick={() => showKnowledgeImport = true}
+				class="flex items-center justify-center gap-2 bg-primary/10 border border-primary/30 text-primary px-4 py-2.5 rounded-xl hover:bg-primary/20 transition-all duration-300 active:scale-95 cursor-pointer font-bold text-xs shrink-0"
+			>
+				<span class="material-symbols-outlined text-[18px]">upload_file</span>
+				<span>导入问答</span>
+			</button>
 		</div>
 	</div>
 
@@ -480,3 +503,10 @@
 		{/if}
 	{/if}
 </div>
+
+{#if showKnowledgeImport}
+	<KnowledgeImportModal
+		onConfirm={confirmKnowledgeImport}
+		onCancel={() => showKnowledgeImport = false}
+	/>
+{/if}

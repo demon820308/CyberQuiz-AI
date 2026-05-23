@@ -5,7 +5,6 @@
 	import { goto } from '$app/navigation';
 	import { parseMarkdown } from '$lib/utils/mdParser';
 	import ParserPreviewModal from '$lib/components/ParserPreviewModal.svelte';
-	import KnowledgeImportModal from '$lib/components/KnowledgeImportModal.svelte';
 
 	import type { Question } from '$lib/types';
 	import { untrack } from 'svelte';
@@ -71,25 +70,8 @@
 		quizStore.showToast('已取消导入', 'error');
 	}
 
-	let showKnowledgeImport = $state(false);
-
-	function confirmKnowledgeImport(questions: any[], semester: string, subject: string) {
-		quizStore.addKnowledgeQuestions(questions.map(q => ({
-			...q,
-			semester,
-			subject
-		})));
-		showKnowledgeImport = false;
-		quizStore.showToast(`成功导入 ${questions.length} 道知识问答题！`, 'success');
-		goto(`/knowledge/${semester}/${subject}`);
-	}
-
 	function triggerUpload() {
-		if (page.url.pathname.startsWith('/knowledge')) {
-			showKnowledgeImport = true;
-		} else {
-			fileInput?.click();
-		}
+		fileInput?.click();
 	}
 
 	let showDbWarning = $state(true);
@@ -311,11 +293,5 @@
 	/>
 {/if}
 
-{#if showKnowledgeImport}
-	<KnowledgeImportModal
-		onConfirm={confirmKnowledgeImport}
-		onCancel={() => showKnowledgeImport = false}
-	/>
-{/if}
 
 
