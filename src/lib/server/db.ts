@@ -1,4 +1,5 @@
 import type { Question, WrongRecord, QuizHistory, SessionProgress } from '../types';
+import type { KnowledgeQuestion } from '../data/knowledgeQuestions';
 
 /**
  * Cloudflare D1 Database Access Layer for CyberQuiz AI
@@ -244,9 +245,79 @@ export async function initializeDatabase(db: D1Database): Promise<void> {
 			submitted INTEGER NOT NULL,
 			selectedAnswers TEXT NOT NULL
 		);
+
+		CREATE TABLE IF NOT EXISTS knowledge_questions (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			semester TEXT NOT NULL,
+			subject TEXT NOT NULL,
+			tag TEXT NOT NULL,
+			difficulty TEXT CHECK(difficulty IN ('easy', 'medium', 'hard')) NOT NULL,
+			content TEXT NOT NULL,
+			standardAnswer TEXT NOT NULL,
+			logicalStructure TEXT NOT NULL,
+			keywords TEXT NOT NULL,
+			mnemonic TEXT NOT NULL
+		);
 	`;
 	console.log('[DB] Running auto-initialization schema...');
 	await db.exec(schema);
 	console.log('[DB] Auto-initialization schema completed successfully.');
+}
+
+// 5. KNOWLEDGE QUESTIONS
+export async function getAllKnowledgeQuestions(db: D1Database): Promise<KnowledgeQuestion[]> {
+	try {
+		const { results } = await db.prepare('SELECT * FROM knowledge_questions ORDER BY id ASC').all();
+		return (results || []).map((row: any) => ({
+			id: row.id,
+			semester: row.semester,
+			subject: row.subject,
+			tag: row.tag,
+			difficulty: row.difficulty as 'easy' | 'medium' | 'hard',
+			content: row.content,
+			standardAnswer: row.standardAnswer,
+			logicalStructure: row.logicalStructure,
+			keywords: JSON.parse(row.keywords),
+			mnemonic: JSON.parse(row.mnemonic)
+		}));
+	} catch (e) {
+		console.error('[DB Error] getAllKnowledgeQuestions:', e);
+		throw e;
+	}
+}
+
+export async function insertKnowledgeQuestionsBatch(
+	db: D1Database,
+	questions: Omit<KnowledgeQuestion, 'id'>[]
+): Promise<boolean> {
+	try {
+		const statements = [];
+		for (const q of questions) {
+			statements.push(
+				db.prepare(
+					`INSERT INTO knowledge_questions (semester, subject, tag, difficulty, content, standardAnswer, logicalStructure, keywords, mnemonic)
+					 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+				).bind(
+					q.semester,
+					q.subject,
+					q.tag,
+					q.difficulty,
+					q.content,
+					q.standardAnswer,
+					q.logicalStructure,
+					JSON.stringify(q.keywords || []),
+					JSON.stringify(q.mnemonic || {})
+				)
+			);
+		}
+
+		if (statements.length > 0) {
+			await db.batch(statements);
+		}
+		return true;
+	} catch (e) {
+		console.error('[DB Error] insertKnowledgeQuestionsBatch:', e);
+		throw e;
+	}
 }
 

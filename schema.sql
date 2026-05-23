@@ -39,3 +39,17 @@ CREATE TABLE IF NOT EXISTS session_progress (
     submitted INTEGER NOT NULL,      -- 0 未提交，1 已提交
     selectedAnswers TEXT NOT NULL    -- 以 JSON 字符串存储当前作答
 );
+
+-- 5. 知识问答题库 knowledge_questions
+CREATE TABLE IF NOT EXISTS knowledge_questions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    semester TEXT NOT NULL,
+    subject TEXT NOT NULL,
+    tag TEXT NOT NULL,
+    difficulty TEXT CHECK(difficulty IN ('easy', 'medium', 'hard')) NOT NULL,
+    content TEXT NOT NULL,
+    standardAnswer TEXT NOT NULL,
+    logicalStructure TEXT NOT NULL,
+    keywords TEXT NOT NULL,       -- 以 JSON 字符串存储关键词列表：["keyword1", "keyword2"]
+    mnemonic TEXT NOT NULL        -- 以 JSON 字符串存储记忆锚点映射：{"formula": "...", "scene": "...", "avoid": "..."}
+);

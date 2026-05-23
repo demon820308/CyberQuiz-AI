@@ -190,6 +190,7 @@ class QuizStore {
 
 			this.wrongBook = data.wrongBook || [];
 			this.history = data.history || [];
+			this.knowledgeQuestions = data.knowledgeQuestions || [];
 
 			// Hydrate session progress if exists
 			if (data.progress) {
@@ -460,7 +461,7 @@ class QuizStore {
 		this.showToast(`成功合并导入 ${toAdd.length} 道道德与法治题目！`, 'success');
 	}
 
-	addKnowledgeQuestions(newQuestions: Omit<KnowledgeQuestion, 'id'>[]) {
+	async addKnowledgeQuestions(newQuestions: Omit<KnowledgeQuestion, 'id'>[]) {
 		if (!browser) return;
 		const maxId = this.knowledgeQuestions.reduce((max, q) => Math.max(max, q.id), 0);
 		const mapped = newQuestions.map((q, idx) => ({
@@ -468,6 +469,27 @@ class QuizStore {
 			id: maxId + idx + 1
 		})) as KnowledgeQuestion[];
 		this.knowledgeQuestions = [...this.knowledgeQuestions, ...mapped];
+
+		if (this.isD1 && !this.dbError) {
+			try {
+				const res = await fetch('/api/knowledge', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(newQuestions)
+				});
+				if (!res.ok) {
+					const errData: any = await res.json().catch(() => ({}));
+					console.error('Failed to sync knowledge questions to D1:', errData.error || res.statusText);
+					this.showToast('云端同步失败，已暂存于本地浏览器', 'error');
+				} else {
+					this.showToast('成功同步至云端 D1 数据库！', 'success');
+				}
+			} catch (e) {
+				console.error('Failed to sync knowledge questions to D1:', e);
+				this.showToast('云端连接失败，已暂存于本地浏览器', 'error');
+			}
+		}
+
 		localStorage.setItem('cq_knowledge_questions', JSON.stringify(this.knowledgeQuestions));
 	}
 
