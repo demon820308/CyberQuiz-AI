@@ -174,9 +174,9 @@
 				clean = clean.replace(/\*\*(.*?)\*\*/g, '<span class="px-2 py-0.5 rounded bg-primary/10 border border-primary/20 text-primary font-bold mx-1">$1</span>');
 				
 				// Style arrow descriptors e.g. ->
-				clean = clean.replace(/\s*->\s*/g, ' <span class="material-symbols-outlined text-xs text-primary font-extrabold mx-1.5 align-middle">double_arrow</span> ');
+				clean = clean.replace(/\s*->\s*/g, ' <span class="material-symbols-outlined text-sm text-primary font-extrabold mx-1.5 align-middle">double_arrow</span> ');
 				
-				return `<div class="flex items-start gap-2 bg-surface-container-low/40 p-3 rounded-xl border border-outline-variant/5 my-2 hover:border-primary/20 transition-colors"><span class="text-primary mt-0.5">•</span><div class="text-xs font-semibold leading-relaxed text-on-surface">${clean}</div></div>`;
+				return `<div class="flex items-start gap-2 bg-surface-container-low/40 p-3 rounded-xl border border-outline-variant/5 my-2 hover:border-primary/20 transition-colors"><span class="text-primary mt-0.5">•</span><div class="text-sm font-semibold leading-relaxed text-on-surface">${clean}</div></div>`;
 			})
 			.join('');
 	}
@@ -330,7 +330,7 @@
 								{(currentPage - 1) * pageSize + idx + 1}
 							</div>
 							<!-- Subject Category Tag -->
-							<span class="text-body-md font-extrabold text-[#38bdf8] text-glow-primary">
+							<span class="text-body-sm font-extrabold text-[#38bdf8] text-glow-primary">
 								{q.tag}
 							</span>
 						</div>
@@ -370,7 +370,7 @@
 					</div>
 
 					<!-- Prompt Body -->
-					<div class="pl-0 md:pl-11 py-2 text-on-surface-variant text-body-md whitespace-pre-line leading-relaxed font-semibold">
+					<div class="pl-0 md:pl-11 py-2 text-on-surface-variant text-body-sm whitespace-pre-line leading-relaxed font-semibold">
 						{@html formatParagraphs(q.content)}
 					</div>
 
@@ -384,7 +384,7 @@
 									<span class="material-symbols-outlined text-[20px]">assignment_turned_in</span>
 									<span>标准答案</span>
 								</div>
-								<div class="text-xs leading-relaxed font-medium space-y-2">
+								<div class="text-sm leading-relaxed font-medium space-y-2">
 									{@html formatParagraphs(q.standardAnswer)}
 								</div>
 							</div>
@@ -398,7 +398,7 @@
 										<span class="material-symbols-outlined text-[18px]">account_tree</span>
 										<span>逻辑架构</span>
 									</div>
-									<div class="text-[11px] leading-relaxed">
+									<div class="text-sm leading-relaxed">
 										{@html formatLogicalStructure(q.logicalStructure)}
 									</div>
 								</div>
@@ -409,10 +409,10 @@
 										<span class="material-symbols-outlined text-[18px]">sell</span>
 										<span>核心关键词</span>
 									</div>
-									<p class="text-xs text-on-surface-variant leading-relaxed">记忆答案时，重点把握以下得分关键词：</p>
+									<p class="text-sm text-on-surface-variant leading-relaxed">记忆答案时，重点把握以下得分关键词：</p>
 									<div class="flex flex-wrap gap-2 pt-2">
 										{#each q.keywords as word}
-											<span class="px-3 py-1 bg-secondary/10 border border-secondary/25 text-secondary text-xs font-bold rounded-lg tracking-wide shadow-sm hover:scale-105 transition-transform duration-200 cursor-help" title="核心踩分点：{word}">
+											<span class="px-3 py-1 bg-secondary/10 border border-secondary/25 text-secondary text-sm font-bold rounded-lg tracking-wide shadow-sm hover:scale-105 transition-transform duration-200 cursor-help" title="核心踩分点：{word}">
 												{word}
 											</span>
 										{/each}
@@ -431,27 +431,27 @@
 								<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 									<!-- 口诀 -->
 									<div class="space-y-1 bg-surface-container-lowest/60 p-3.5 rounded-xl border border-outline-variant/5">
-										<div class="flex items-center gap-1.5 text-amber-400 font-bold text-xs">
+										<div class="flex items-center gap-1.5 text-amber-400 font-bold text-sm">
 											<span class="material-symbols-outlined text-[16px]">key</span>
 											<span>口诀记忆</span>
 										</div>
-										<p class="text-xs text-on-surface font-semibold leading-relaxed pt-1 select-all">{q.mnemonic.formula}</p>
+										<p class="text-sm text-on-surface font-semibold leading-relaxed pt-1 select-all">{q.mnemonic.formula}</p>
 									</div>
 									<!-- 场景 -->
 									<div class="space-y-1 bg-surface-container-lowest/60 p-3.5 rounded-xl border border-outline-variant/5">
-										<div class="flex items-center gap-1.5 text-blue-400 font-bold text-xs">
+										<div class="flex items-center gap-1.5 text-blue-400 font-bold text-sm">
 											<span class="material-symbols-outlined text-[16px]">explore</span>
 											<span>关联场景</span>
 										</div>
-										<p class="text-xs text-on-surface-variant leading-relaxed pt-1">{q.mnemonic.scene}</p>
+										<p class="text-sm text-on-surface-variant leading-relaxed pt-1">{q.mnemonic.scene}</p>
 									</div>
 									<!-- 避坑 -->
 									<div class="space-y-1 bg-surface-container-lowest/60 p-3.5 rounded-xl border border-outline-variant/5">
-										<div class="flex items-center gap-1.5 text-error font-bold text-xs">
+										<div class="flex items-center gap-1.5 text-error font-bold text-sm">
 											<span class="material-symbols-outlined text-[16px]">report</span>
 											<span>容易避坑</span>
 										</div>
-										<p class="text-xs text-on-surface-variant leading-relaxed pt-1">{q.mnemonic.avoid}</p>
+										<p class="text-sm text-on-surface-variant leading-relaxed pt-1">{q.mnemonic.avoid}</p>
 									</div>
 								</div>
 							</div>
