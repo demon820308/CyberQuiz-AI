@@ -32,10 +32,7 @@
 	}
 
 	function resumePractice() {
-		const success = quizStore.resumeSessionProgress();
-		if (success) {
-			goto('/quiz');
-		}
+		goto('/quiz');
 	}
 
 	// Calculate stats
