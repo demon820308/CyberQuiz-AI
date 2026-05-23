@@ -127,53 +127,5 @@ export function getKnowledgeQuestions(
 		filtered = filtered.filter(item => item.difficulty === difficulty);
 	}
 
-	// If the result is fewer than 12 questions and no search query is active, 
-	// let's auto-generate additional realistic simulated questions to reach a rich page size 
-	// so the user is wowed and can test pagination properly!
-	if (filtered.length < 15 && (!search || search.trim() === '')) {
-		const countNeeded = 32 - filtered.length; // Create a solid set of 32 mock questions
-		const subjectNames: Record<string, string> = {
-			ethics: '道德与法治',
-			history: '历史',
-			geography: '地理',
-			biology: '生物'
-		};
-		const semesterNames: Record<string, string> = {
-			grade7_up: '七年级上学期',
-			grade7_down: '七年级下学期',
-			grade8_up: '八年级上学期',
-			grade8_down: '八年级下学期',
-			grade9_up: '九年级上学期',
-			grade9_down: '九年级下学期'
-		};
-
-		const curSubName = subjectNames[subject] || '学科';
-		const curSemName = semesterNames[semester] || '学期';
-
-		const diffList: ('easy' | 'medium' | 'hard')[] = ['easy', 'medium', 'hard'];
-
-		for (let i = 1; i <= countNeeded; i++) {
-			const mockId = 100 + i;
-			const mockDiff = diffList[i % 3];
-			
-			filtered.push({
-				id: mockId,
-				semester,
-				subject,
-				tag: `【${curSemName}·${curSubName}专项模拟第 ${i} 题】`,
-				difficulty: mockDiff,
-				content: `这是系统自动为『${curSemName}』的『${curSubName}』科目生成的专项问答真题。\n\n材料一 针对本阶段的教育教学评估大纲，设计并探讨该模块的核心问题。\n（1）请运用所学相关原理，详细分析如何看待该材料中的科学现象或社会规则。\n（2）联系初中学生的实际生活，谈谈面对这些情况时我们应当如何做？`,
-				standardAnswer: `（1）①紧密结合知识大纲，该现象充分体现了${curSubName}的核心原理，即我们在日常学习与社会实践中应当遵守的基本规范与准则。②遵循唯物辩证法或相关自然科学定律，要求我们要以科学、理性的态度分析主客观规律。\n（2）①认真对待自身发展，提高自律能力与实践探索精神。②积极融入集体，学会交流与合作。③将理论付诸实际行动，立足当下，不断提升个人综合素养，树立坚定的意志与追求。`,
-				logicalStructure: `* **理论归纳**：定性分析（**阐明核心原理**） -> 多元印证（结合规律、因地制宜）。\n* **个人践行**：认知层次（**提高自律自省**） -> 协同层次（融入集体） -> 落实行动（**付诸于行**）。`,
-				keywords: ['核心原理', '实践探索', '理性的态度', '付诸行动', '综合素养'],
-				mnemonic: {
-					formula: `专项题目第${i}号，理论牢记最重要；看清材料理逻辑，落实行动步步高。`,
-					scene: `回想我们在课本上学习到的『${curSubName}』重点框题内容，将它们带入生活常识进行合理发散。`,
-					avoid: `切记不要生搬硬套非本学期的公式和概念；做问答题时，注意分条缕析，标注好①②③等步骤点。`
-				}
-			});
-		}
-	}
-
 	return filtered;
 }
