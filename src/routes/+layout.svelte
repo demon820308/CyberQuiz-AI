@@ -206,7 +206,7 @@
 				href="/knowledge"
 				class="flex items-center gap-2 bg-secondary-container/20 border border-secondary/30 text-secondary px-4 py-2 rounded-xl hover:bg-secondary-container/30 transition-all duration-300 active:scale-95"
 			>
-				<span class="material-symbols-outlined text-[20px]">book_4_spark</span>
+				<span class="material-symbols-outlined text-[20px]">book</span>
 				<span class="font-label-md text-label-md">知识问答题</span>
 			</a>
 
@@ -228,7 +228,7 @@
 				class="p-2 text-secondary hover:bg-surface-bright/10 rounded-full transition-all"
 				title="知识问答题"
 			>
-				<span class="material-symbols-outlined">book_4_spark</span>
+				<span class="material-symbols-outlined">book</span>
 			</a>
 			<button
 				onclick={triggerUpload}
