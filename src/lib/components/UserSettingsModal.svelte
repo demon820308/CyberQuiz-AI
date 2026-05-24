@@ -22,6 +22,7 @@
 			confirmPassword = '';
 			errorMessage = null;
 			infoMessage = null;
+			quizStore.fetchBanks(); // 拉取最新题库列表以供选择
 		}
 	});
 
@@ -83,7 +84,7 @@
 		<!-- Main Card -->
 		<div
 			transition:scale={{ start: 0.95, duration: 200 }}
-			class="relative bg-surface/85 border border-outline-variant/30 backdrop-blur-md shadow-2xl rounded-[28px] p-6 md:p-8 max-w-[440px] w-full space-y-6"
+			class="relative bg-surface/85 border border-outline-variant/30 backdrop-blur-md shadow-2xl rounded-[28px] p-6 md:p-8 max-w-[440px] w-full space-y-5"
 			onclick={(e) => e.stopPropagation()}
 		>
 			<!-- Card Header -->
@@ -112,6 +113,48 @@
 						</span>
 					</div>
 				</div>
+			</div>
+
+			<!-- Active Question Bank Selector -->
+			<div class="space-y-2 bg-surface-container-low/60 border border-outline-variant/10 p-4 rounded-2xl">
+				<div class="flex items-center gap-1.5 text-primary font-bold text-xs">
+					<span class="material-symbols-outlined text-[18px]">library_books</span>
+					<span>当前练习题库选择</span>
+				</div>
+				<p class="text-[11px] text-on-surface-variant/90 leading-relaxed font-semibold">
+					选择当前答题页面需要装载应用的客观选择题库：
+				</p>
+				
+				<select
+					value={quizStore.activeBankId || ''}
+					onchange={(e) => {
+						const targetId = parseInt((e.target as HTMLSelectElement).value);
+						if (!isNaN(targetId)) {
+							quizStore.applyBank(targetId);
+						}
+					}}
+					class="w-full bg-[#0b1326]/60 border border-outline-variant/20 focus:border-primary rounded-xl px-3 py-2 text-xs text-on-surface outline-none transition-all cursor-pointer font-bold font-sans"
+				>
+					<!-- Public/Global banks -->
+					<optgroup label="公共官方推荐题库" class="bg-[#0b1326] text-on-surface-variant font-bold">
+						{#each quizStore.questionBanks.filter(b => b.is_global === 1) as bank}
+							<option value={bank.id} class="bg-[#0b1326] text-on-surface font-semibold">
+								{bank.name} {quizStore.activeBankId === bank.id ? ' (应用中)' : ''}
+							</option>
+						{/each}
+					</optgroup>
+
+					<!-- Personal private banks -->
+					{#if quizStore.questionBanks.some(b => b.is_global === 0)}
+						<optgroup label="我的个人专属题库" class="bg-[#0b1326] text-on-surface-variant font-bold">
+							{#each quizStore.questionBanks.filter(b => b.is_global === 0) as bank}
+								<option value={bank.id} class="bg-[#0b1326] text-on-surface font-semibold">
+									{bank.name} {quizStore.activeBankId === bank.id ? ' (应用中)' : ''}
+								</option>
+							{/each}
+						</optgroup>
+					{/if}
+				</select>
 			</div>
 
 			<!-- Dynamic Messages -->
