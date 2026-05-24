@@ -10,6 +10,11 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 	}
 
 	try {
+		const username = request.headers.get('x-user-username');
+		if (!username) {
+			return json({ success: false, error: 'Unauthorized: Missing user credentials' }, { status: 401 });
+		}
+
 		const progress: SessionProgress = await request.json();
 		if (
 			progress === null ||
@@ -22,7 +27,7 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 			return json({ success: false, error: 'Invalid progress data' }, { status: 400 });
 		}
 
-		const success = await saveSessionProgress(db, progress);
+		const success = await saveSessionProgress(db, username, progress);
 		if (success) {
 			return json({ success: true });
 		} else {
@@ -34,14 +39,19 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 	}
 };
 
-export const DELETE: RequestHandler = async ({ platform }) => {
+export const DELETE: RequestHandler = async ({ request, platform }) => {
 	const db = platform?.env.DB;
 	if (!db) {
 		return json({ success: false, error: 'Database binding not found' }, { status: 500 });
 	}
 
 	try {
-		const success = await clearSessionProgress(db);
+		const username = request.headers.get('x-user-username');
+		if (!username) {
+			return json({ success: false, error: 'Unauthorized: Missing user credentials' }, { status: 401 });
+		}
+
+		const success = await clearSessionProgress(db, username);
 		if (success) {
 			return json({ success: true });
 		} else {

@@ -29,13 +29,14 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 	}
 
 	// 2. Fetch from D1 if empty and database binding is active
+	const username = request.headers.get('x-user-username');
 	const db = platform?.env.DB;
-	if (questions.length === 0 && db) {
+	if (questions.length === 0 && db && username) {
 		try {
 			const [dbQuestions, dbWrong, dbHistory] = await Promise.all([
 				getAllQuestions(db),
-				getWrongRecords(db),
-				getQuizHistory(db)
+				getWrongRecords(db, username),
+				getQuizHistory(db, username)
 			]);
 			questions = (dbQuestions as Question[]) || [];
 			wrongBook = (dbWrong as WrongRecord[]) || [];

@@ -32,4 +32,13 @@ export interface SessionProgress {
 	activeQuestionIds: number[];
 	submitted: boolean;
 	selectedAnswers: string[];
+	active_bank_id?: number | null;
+}
+
+export interface User {
+	username: string;
+	nickname: string;
+	passwordHash?: string;
+	createdAt?: string;
+	role?: string;
 }

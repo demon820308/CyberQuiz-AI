@@ -10,12 +10,18 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 	}
 
 	try {
+		const username = request.headers.get('x-user-username');
+		if (!username) {
+			return json({ success: false, error: 'Unauthorized: Missing user credentials' }, { status: 401 });
+		}
+
 		const { questionId, selected, isCorrect } = (await request.json()) as any;
 		if (typeof questionId !== 'number' || !Array.isArray(selected) || typeof isCorrect !== 'boolean') {
 			return json({ success: false, error: 'Invalid payload format' }, { status: 400 });
 		}
 
 		const nowStr = new Date().toLocaleString('zh-CN', { hour12: false }).replace(/\//g, '-');
+		const cleanUser = username.trim().toLowerCase();
 
 		// 1. Insert into general history
 		const historyItem: QuizHistory = {
@@ -24,7 +30,7 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 			correct: isCorrect,
 			time: nowStr
 		};
-		await insertQuizHistory(db, historyItem);
+		await insertQuizHistory(db, cleanUser, historyItem);
 
 		// 2. Fetch existing wrong record from wrong_book (if any)
 		let updatedWrongRecord: WrongRecord | null = null;
@@ -32,7 +38,9 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 		let message = '';
 		let remainingCount = 0;
 
-		const row: any = await db.prepare('SELECT * FROM wrong_book WHERE questionId = ?').bind(questionId).first();
+		const row: any = await db.prepare('SELECT * FROM wrong_book WHERE username = ? AND questionId = ?')
+			.bind(cleanUser, questionId)
+			.first();
 
 		if (!isCorrect) {
 			// Answered incorrectly
@@ -51,14 +59,14 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 					lastWrongTime: nowStr
 				};
 			}
-			await updateWrongRecord(db, updatedWrongRecord);
+			await updateWrongRecord(db, cleanUser, updatedWrongRecord);
 		} else {
 			// Answered correctly
 			if (row) {
 				const newCount = row.count - 1;
 				if (newCount <= 0) {
 					// Count reached zero! Fully cleared from active wrong list
-					await deleteWrongRecord(db, questionId);
+					await deleteWrongRecord(db, cleanUser, questionId);
 					deleted = true;
 					message = '错题攻克成功！已从错题本移出';
 				} else {
@@ -66,9 +74,9 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 						questionId,
 						count: newCount,
 						wrongCount: row.wrongCount,
-						lastWrongTime: row.lastWrongTime // keep last wrong time or update to now? Keeping last wrong time is fine.
+						lastWrongTime: row.lastWrongTime // keep last wrong time
 					};
-					await updateWrongRecord(db, updatedWrongRecord);
+					await updateWrongRecord(db, cleanUser, updatedWrongRecord);
 					remainingCount = newCount;
 					message = `错题频度降低，剩余复习次数: ${newCount}次`;
 				}
@@ -77,7 +85,7 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 
 		// Retrieve all history and wrong records to sync client perfectly
 		const [wrongBook, history] = await Promise.all([
-			db.prepare('SELECT * FROM wrong_book').all().then(({ results }) => 
+			db.prepare('SELECT * FROM wrong_book WHERE username = ?').bind(cleanUser).all().then(({ results }) => 
 				(results || []).map((r: any) => ({
 					questionId: r.questionId,
 					count: r.count,
@@ -85,7 +93,7 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 					lastWrongTime: r.lastWrongTime
 				}))
 			),
-			db.prepare('SELECT * FROM quiz_history ORDER BY id ASC').all().then(({ results }) => 
+			db.prepare('SELECT * FROM quiz_history WHERE username = ? ORDER BY id ASC').bind(cleanUser).all().then(({ results }) => 
 				(results || []).map((r: any) => ({
 					questionId: r.questionId,
 					selected: JSON.parse(r.selected),

@@ -126,6 +126,11 @@ class QuizStore {
 	history = $state<QuizHistory[]>([]);
 	knowledgeQuestions = $state<KnowledgeQuestion[]>([]);
 
+	// User & Bank state
+	currentUser = $state<{ username: string; nickname: string; role?: string } | null>(null);
+	questionBanks = $state<any[]>([]);
+	activeBankId = $state<number | null>(null);
+
 	// Current quiz session state
 	currentIndex = $state(0);
 	selectedAnswers = $state<string[]>([]);
@@ -170,10 +175,27 @@ class QuizStore {
 		this.dbError = data.dbError || null;
 		
 		if (this.isD1 && !this.dbError) {
+			this.currentUser = data.user || null;
+			if (this.currentUser) {
+				localStorage.setItem('cq_current_user', JSON.stringify(this.currentUser));
+				
+				// Pull visible banks
+				this.fetchBanks();
+				
+				// Resolve activeBankId
+				if (data.progress) {
+					this.activeBankId = data.progress.active_bank_id || null;
+				}
+			} else {
+				localStorage.removeItem('cq_current_user');
+				this.activeBankId = null;
+				this.questionBanks = [];
+			}
+
 			if (data.questions && data.questions.length > 0) {
 				this.questions = data.questions;
 			} else {
-				// Seed default questions to D1 so user is wowed at first glance!
+				// Seed default questions to D1
 				this.questions = [...defaultQuestions];
 				try {
 					const res = await fetch('/api/questions', {
@@ -198,20 +220,18 @@ class QuizStore {
 			} else {
 				// Seed default knowledge questions to D1
 				this.knowledgeQuestions = [...defaultKnowledgeQuestions];
-				if (this.isD1 && !this.dbError) {
-					try {
-						const res = await fetch('/api/knowledge', {
-							method: 'POST',
-							headers: { 'Content-Type': 'application/json' },
-							body: JSON.stringify(defaultKnowledgeQuestions.map(({ id, ...q }) => q))
-						});
-						if (!res.ok) {
-							const errData: any = await res.json().catch(() => ({}));
-							console.error('Failed to seed default knowledge questions to D1:', errData.error || res.statusText);
-						}
-					} catch (e) {
-						console.error('Failed to seed default knowledge questions to D1:', e);
+				try {
+					const res = await fetch('/api/knowledge', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify(defaultKnowledgeQuestions.map(({ id, ...q }) => q))
+					});
+					if (!res.ok) {
+						const errData: any = await res.json().catch(() => ({}));
+						console.error('Failed to seed default knowledge questions to D1:', errData.error || res.statusText);
 					}
+				} catch (e) {
+					console.error('Failed to seed default knowledge questions to D1:', e);
 				}
 			}
 
@@ -248,6 +268,17 @@ class QuizStore {
 				this.savedSessionDetails = null;
 			}
 		} else {
+			// Offline/local only: Read current user from storage and load data
+			const savedUser = localStorage.getItem('cq_current_user');
+			if (savedUser) {
+				try {
+					this.currentUser = JSON.parse(savedUser);
+				} catch {
+					this.currentUser = null;
+				}
+			} else {
+				this.currentUser = null;
+			}
 			this.loadFromStorage();
 		}
 		this.hydrated = true;
@@ -270,28 +301,6 @@ class QuizStore {
 			localStorage.setItem('cq_questions', JSON.stringify(defaultQuestions));
 		}
 
-		// Load wrong book
-		const savedWrong = localStorage.getItem('cq_wrong_book');
-		if (savedWrong) {
-			try {
-				this.wrongBook = JSON.parse(savedWrong);
-			} catch (e) {
-				console.error('Failed to parse wrong book', e);
-				this.wrongBook = [];
-			}
-		}
-
-		// Load history
-		const savedHistory = localStorage.getItem('cq_history');
-		if (savedHistory) {
-			try {
-				this.history = JSON.parse(savedHistory);
-			} catch (e) {
-				console.error('Failed to parse history', e);
-				this.history = [];
-			}
-		}
-
 		// Load knowledge questions
 		const savedKQ = localStorage.getItem('cq_knowledge_questions');
 		if (savedKQ) {
@@ -307,17 +316,15 @@ class QuizStore {
 			localStorage.setItem('cq_knowledge_questions', JSON.stringify(this.knowledgeQuestions));
 		}
 
-		// Restore admin authorization state (with 24h expiry)
+		// Restore admin authorization state
 		const savedAuth = localStorage.getItem('cq_admin_auth');
 		if (savedAuth) {
 			try {
 				const authData = JSON.parse(savedAuth);
 				if (authData.exp && Date.now() < authData.exp) {
 					this.isAuthorizedToDelete = true;
-					// Also restore the password so delete API calls still work
 					if (authData.pw) this.adminPassword = authData.pw;
 				} else {
-					// Expired — clean up
 					localStorage.removeItem('cq_admin_auth');
 					this.isAuthorizedToDelete = false;
 					this.adminPassword = '';
@@ -329,8 +336,37 @@ class QuizStore {
 			}
 		}
 
+		// User specific data scope
+		const username = this.currentUser?.username || 'local_default';
+
+		// Load wrong book
+		const savedWrong = localStorage.getItem(`cq_wrong_book_${username}`);
+		if (savedWrong) {
+			try {
+				this.wrongBook = JSON.parse(savedWrong);
+			} catch (e) {
+				console.error('Failed to parse wrong book', e);
+				this.wrongBook = [];
+			}
+		} else {
+			this.wrongBook = [];
+		}
+
+		// Load history
+		const savedHistory = localStorage.getItem(`cq_history_${username}`);
+		if (savedHistory) {
+			try {
+				this.history = JSON.parse(savedHistory);
+			} catch (e) {
+				console.error('Failed to parse history', e);
+				this.history = [];
+			}
+		} else {
+			this.history = [];
+		}
+
 		// Check saved session progress
-		const savedProgress = localStorage.getItem('cq_session_progress');
+		const savedProgress = localStorage.getItem(`cq_session_progress_${username}`);
 		if (savedProgress) {
 			this.hasSavedProgress = true;
 			try {
@@ -373,12 +409,14 @@ class QuizStore {
 
 	saveWrongBook() {
 		if (!browser) return;
-		localStorage.setItem('cq_wrong_book', JSON.stringify(this.wrongBook));
+		const username = this.currentUser?.username || 'local_default';
+		localStorage.setItem(`cq_wrong_book_${username}`, JSON.stringify(this.wrongBook));
 	}
 
 	saveHistory() {
 		if (!browser) return;
-		localStorage.setItem('cq_history', JSON.stringify(this.history));
+		const username = this.currentUser?.username || 'local_default';
+		localStorage.setItem(`cq_history_${username}`, JSON.stringify(this.history));
 	}
 
 	// Session Progress Saving
@@ -392,7 +430,9 @@ class QuizStore {
 			submitted: this.submitted,
 			selectedAnswers: this.selectedAnswers
 		};
-		localStorage.setItem('cq_session_progress', JSON.stringify(progress));
+
+		const username = this.currentUser?.username || 'local_default';
+		localStorage.setItem(`cq_session_progress_${username}`, JSON.stringify(progress));
 		this.hasSavedProgress = true;
 		this.savedSessionDetails = {
 			currentIndex: this.currentIndex,
@@ -401,10 +441,13 @@ class QuizStore {
 			mode: this.exerciseMode
 		};
 
-		if (this.isD1 && !this.dbError) {
+		if (this.isD1 && !this.dbError && this.currentUser) {
 			fetch('/api/quiz/progress', {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					'Content-Type': 'application/json',
+					'X-User-Username': this.currentUser.username
+				},
 				body: JSON.stringify(progress)
 			}).catch(e => console.error('[Sync Error] saveSessionProgress:', e));
 		}
@@ -412,13 +455,17 @@ class QuizStore {
 
 	clearSessionProgress() {
 		if (!browser) return;
-		localStorage.removeItem('cq_session_progress');
+		const username = this.currentUser?.username || 'local_default';
+		localStorage.removeItem(`cq_session_progress_${username}`);
 		this.hasSavedProgress = false;
 		this.savedSessionDetails = null;
 
-		if (this.isD1 && !this.dbError) {
+		if (this.isD1 && !this.dbError && this.currentUser) {
 			fetch('/api/quiz/progress', {
-				method: 'DELETE'
+				method: 'DELETE',
+				headers: {
+					'X-User-Username': this.currentUser.username
+				}
 			}).catch(e => console.error('[Sync Error] clearSessionProgress:', e));
 		}
 	}
@@ -426,7 +473,8 @@ class QuizStore {
 	resumeSessionProgress(): boolean {
 		if (!browser) return false;
 
-		const progressStr = localStorage.getItem('cq_session_progress');
+		const username = this.currentUser?.username || 'local_default';
+		const progressStr = localStorage.getItem(`cq_session_progress_${username}`);
 		if (!progressStr) return false;
 
 		try {
@@ -471,6 +519,251 @@ class QuizStore {
 			this.clearSessionProgress();
 			return false;
 		}
+	}
+
+	// User authentication actions
+	async register(username: string, nickname: string, password: string): Promise<{ success: boolean; error?: string }> {
+		try {
+			const res = await fetch('/api/users/auth', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ action: 'register', username, nickname, password })
+			});
+			const result = (await res.json()) as any;
+			if (result.success) {
+				this.currentUser = result.user;
+				if (browser) {
+					localStorage.setItem('cq_current_user', JSON.stringify(result.user));
+					window.location.reload();
+				}
+				return { success: true };
+			} else {
+				return { success: false, error: result.error };
+			}
+		} catch (e: any) {
+			return { success: false, error: e.message || '网络连接失败，请重试' };
+		}
+	}
+
+	async login(username: string, password: string): Promise<{ success: boolean; error?: string }> {
+		try {
+			const res = await fetch('/api/users/auth', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ action: 'login', username, password })
+			});
+			const result = (await res.json()) as any;
+			if (result.success) {
+				this.currentUser = result.user;
+				if (browser) {
+					localStorage.setItem('cq_current_user', JSON.stringify(result.user));
+					window.location.reload();
+				}
+				return { success: true };
+			} else {
+				return { success: false, error: result.error };
+			}
+		} catch (e: any) {
+			return { success: false, error: e.message || '网络连接失败，请重试' };
+		}
+	}
+
+	async logout() {
+		try {
+			await fetch('/api/users/auth', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ action: 'logout', username: this.currentUser?.username || '' })
+			});
+		} catch (e) {
+			console.error('Logout API failed:', e);
+		}
+		this.currentUser = null;
+		if (browser) {
+			localStorage.removeItem('cq_current_user');
+			window.location.reload();
+		}
+	}
+
+	// Bank and admin management actions
+	async fetchBanks() {
+		if (!this.currentUser) return;
+		try {
+			const res = await fetch('/api/banks', {
+				headers: { 'X-User-Username': this.currentUser.username }
+			});
+			const result = (await res.json()) as any;
+			if (result.success) {
+				this.questionBanks = result.banks;
+			}
+		} catch (e) {
+			console.error('Failed to fetch banks:', e);
+		}
+	}
+
+	async uploadBank(name: string, questions: Question[], isGlobal = false): Promise<boolean> {
+		if (!this.currentUser) return false;
+		try {
+			const res = await fetch('/api/banks', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-User-Username': this.currentUser.username
+				},
+				body: JSON.stringify({ name, isGlobal, questions })
+			});
+			const result = (await res.json()) as any;
+			if (result.success) {
+				this.showToast(result.message || '题库上传成功！', 'success');
+				this.fetchBanks();
+				return true;
+			} else {
+				this.showToast(result.error || '题库上传失败！', 'error');
+				return false;
+			}
+		} catch (e) {
+			console.error('Failed to upload bank:', e);
+			this.showToast('网络请求失败', 'error');
+			return false;
+		}
+	}
+
+	async applyBank(bankId: number) {
+		if (!this.currentUser) return;
+		try {
+			const progress: SessionProgress = {
+				currentIndex: 0,
+				exerciseMode: 'sequential',
+				activeQuestionIds: [],
+				submitted: false,
+				selectedAnswers: [],
+				active_bank_id: bankId
+			};
+
+			this.activeBankId = bankId;
+
+			const res = await fetch('/api/quiz/progress', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-User-Username': this.currentUser.username
+				},
+				body: JSON.stringify(progress)
+			});
+			const result = (await res.json()) as any;
+			if (result.success) {
+				this.showToast('应用题库成功，正在重新加载...', 'success');
+				if (browser) {
+					window.location.reload();
+				}
+			}
+		} catch (e) {
+			console.error('Failed to apply bank:', e);
+			this.showToast('应用题库失败', 'error');
+		}
+	}
+
+	async deleteBank(bankId: number): Promise<boolean> {
+		if (!this.currentUser) return false;
+		try {
+			const res = await fetch('/api/banks', {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-User-Username': this.currentUser.username
+				},
+				body: JSON.stringify({ bankId })
+			});
+			const result = (await res.json()) as any;
+			if (result.success) {
+				this.questionBanks = result.banks;
+				this.showToast('成功删除题库！', 'success');
+				
+				// If currently applied bank was deleted, reset to default
+				if (this.activeBankId === bankId) {
+					const defaultB = this.questionBanks.find(b => b.name === '默认编程题库' || b.is_global === 1);
+					if (defaultB) {
+						this.applyBank(defaultB.id);
+					} else {
+						window.location.reload();
+					}
+				}
+				return true;
+			} else {
+				this.showToast(result.error || '删除题库失败！', 'error');
+				return false;
+			}
+		} catch (e) {
+			console.error('Failed to delete bank:', e);
+			this.showToast('网络请求失败', 'error');
+			return false;
+		}
+	}
+
+	async changeAdminPassword(newPassword: string): Promise<{ success: boolean; error?: string }> {
+		if (!this.currentUser || this.currentUser.role !== 'admin') {
+			return { success: false, error: '权限不足' };
+		}
+		try {
+			const res = await fetch('/api/admin/password', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-User-Username': this.currentUser.username
+				},
+				body: JSON.stringify({ newPassword })
+			});
+			const result = (await res.json()) as any;
+			if (result.success) {
+				this.showToast('修改密码成功！', 'success');
+				return { success: true };
+			} else {
+				return { success: false, error: result.error };
+			}
+		} catch (e: any) {
+			return { success: false, error: e.message || '网络连接失败，请重试' };
+		}
+	}
+
+	async fetchUsers(): Promise<any[]> {
+		if (!this.currentUser || this.currentUser.role !== 'admin') return [];
+		try {
+			const res = await fetch('/api/admin/users', {
+				headers: { 'X-User-Username': this.currentUser.username }
+			});
+			const result = (await res.json()) as any;
+			if (result.success) {
+				return result.users;
+			}
+		} catch (e) {
+			console.error('Failed to fetch users:', e);
+		}
+		return [];
+	}
+
+	async deleteUser(username: string): Promise<boolean> {
+		if (!this.currentUser || this.currentUser.role !== 'admin') return false;
+		try {
+			const res = await fetch('/api/admin/users', {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-User-Username': this.currentUser.username
+				},
+				body: JSON.stringify({ username })
+			});
+			const result = (await res.json()) as any;
+			if (result.success) {
+				this.showToast(`成功清退用户 ${username}！`, 'success');
+				return true;
+			} else {
+				this.showToast(result.error || '清退用户失败', 'error');
+			}
+		} catch (e) {
+			console.error('Failed to delete user:', e);
+			this.showToast('网络请求失败', 'error');
+		}
+		return false;
 	}
 
 	// Actions
@@ -519,9 +812,13 @@ class QuizStore {
 
 		if (this.isD1 && !this.dbError) {
 			try {
+				const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+				if (this.currentUser) {
+					headers['X-User-Username'] = this.currentUser.username;
+				}
 				const res = await fetch('/api/knowledge', {
 					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
+					headers,
 					body: JSON.stringify(newQuestions)
 				});
 				if (!res.ok) {
@@ -545,10 +842,14 @@ class QuizStore {
 
 		if (this.isD1 && !this.dbError) {
 			try {
+				const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+				if (this.currentUser) {
+					headers['X-User-Username'] = this.currentUser.username;
+				}
 				const res = await fetch('/api/knowledge/delete', {
 					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
-					body: JSON.stringify({ id, password: this.adminPassword })
+					headers,
+					body: JSON.stringify({ id })
 				});
 				if (!res.ok) {
 					const errData: any = await res.json().catch(() => ({}));
@@ -677,11 +978,14 @@ class QuizStore {
 		this.saveSessionProgress();
 
 		// Cloud D1 synchronization (asynchronous & non-blocking)
-		if (this.isD1 && !this.dbError) {
+		if (this.isD1 && !this.dbError && this.currentUser) {
 			try {
 				const res = await fetch('/api/quiz/submit', {
 					method: 'POST',
-					headers: { 'Content-Type': 'application/json' },
+					headers: {
+						'Content-Type': 'application/json',
+						'X-User-Username': this.currentUser.username
+					},
 					body: JSON.stringify({
 						questionId: question.id,
 						selected: userSelected,
@@ -770,10 +1074,13 @@ class QuizStore {
 		}
 		this.saveSessionProgress();
 
-		if (this.isD1 && !this.dbError) {
+		if (this.isD1 && !this.dbError && this.currentUser) {
 			fetch('/api/wrong/remove', {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					'Content-Type': 'application/json',
+					'X-User-Username': this.currentUser.username
+				},
 				body: JSON.stringify({ questionId })
 			})
 			.then(res => res.json())
@@ -798,9 +1105,12 @@ class QuizStore {
 		}
 		this.clearSessionProgress();
 
-		if (this.isD1 && !this.dbError) {
+		if (this.isD1 && !this.dbError && this.currentUser) {
 			fetch('/api/wrong/clear', {
-				method: 'POST'
+				method: 'POST',
+				headers: {
+					'X-User-Username': this.currentUser.username
+				}
 			})
 			.then(res => res.json())
 			.then((data: any) => {

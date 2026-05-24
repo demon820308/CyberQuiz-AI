@@ -283,13 +283,15 @@
 			</div>
 
 			<!-- Q&A Import button -->
-			<button
-				onclick={() => showKnowledgeImport = true}
-				class="flex items-center justify-center gap-2 bg-primary/10 border border-primary/30 text-primary px-4 py-2.5 rounded-xl hover:bg-primary/20 transition-all duration-300 active:scale-95 cursor-pointer font-bold text-xs shrink-0"
-			>
-				<span class="material-symbols-outlined text-[18px]">upload_file</span>
-				<span>导入问答</span>
-			</button>
+			{#if quizStore.currentUser?.role === 'admin'}
+				<button
+					onclick={() => showKnowledgeImport = true}
+					class="flex items-center justify-center gap-2 bg-primary/10 border border-primary/30 text-primary px-4 py-2.5 rounded-xl hover:bg-primary/20 transition-all duration-300 active:scale-95 cursor-pointer font-bold text-xs shrink-0"
+				>
+					<span class="material-symbols-outlined text-[18px]">upload_file</span>
+					<span>导入问答</span>
+				</button>
+			{/if}
 		</div>
 	</div>
 
@@ -335,7 +337,7 @@
 								{q.difficulty === 'easy' ? '简单' : q.difficulty === 'medium' ? '中等' : '困难'}
 							</span>
 
-							{#if quizStore.isAuthorizedToDelete && quizStore.knowledgeQuestions.some(cq => cq.id === q.id)}
+							{#if quizStore.currentUser?.role === 'admin'}
 								<!-- Trash Delete Button -->
 								<button
 									onclick={() => handleDeleteClick(q.id)}

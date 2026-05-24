@@ -9,15 +9,21 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 	}
 
 	try {
+		const username = request.headers.get('x-user-username');
+		if (!username) {
+			return json({ success: false, error: 'Unauthorized: Missing user credentials' }, { status: 401 });
+		}
+
 		const { questionId } = (await request.json()) as any;
 		if (typeof questionId !== 'number') {
 			return json({ success: false, error: 'Invalid question ID' }, { status: 400 });
 		}
 
-		const success = await deleteWrongRecord(db, questionId);
+		const cleanUser = username.trim().toLowerCase();
+		const success = await deleteWrongRecord(db, cleanUser, questionId);
 		if (success) {
 			// Retrieve the updated wrong book list to sync client perfectly
-			const { results } = await db.prepare('SELECT * FROM wrong_book').all();
+			const { results } = await db.prepare('SELECT * FROM wrong_book WHERE username = ?').bind(cleanUser).all();
 			const wrongBook = (results || []).map((row: any) => ({
 				questionId: row.questionId,
 				count: row.count,

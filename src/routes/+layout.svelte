@@ -5,6 +5,7 @@
 	import { goto } from '$app/navigation';
 	import { parseMarkdown } from '$lib/utils/mdParser';
 	import ParserPreviewModal from '$lib/components/ParserPreviewModal.svelte';
+	import UserAuthModal from '$lib/components/UserAuthModal.svelte';
 
 	import type { Question } from '$lib/types';
 	import { untrack } from 'svelte';
@@ -196,6 +197,14 @@
 		>
 			AI助理
 		</a>
+		{#if quizStore.currentUser?.role === 'admin'}
+			<a
+				class="transition-colors font-label-md text-label-md pb-1 {page.url.pathname === '/management' ? 'text-primary font-bold border-b-2 border-primary' : 'text-on-surface-variant hover:text-primary'}"
+				href="/management"
+			>
+				后台管理
+			</a>
+		{/if}
 	</nav>
 
 	<div class="flex items-center gap-4">
@@ -241,14 +250,15 @@
 		</div>
 
 		<div class="flex gap-1 md:gap-2">
-			<!-- Admin Password Lock Button -->
-			<button
-				onclick={openPasswordPrompt}
-				class="p-2 rounded-full transition-all flex items-center justify-center w-10 h-10 border border-outline-variant/15 {quizStore.isAuthorizedToDelete ? 'text-primary bg-primary/10 border-primary/30' : 'text-on-surface-variant hover:bg-surface-bright/10 hover:border-outline-variant/30'}"
-				title={quizStore.isAuthorizedToDelete ? "管理员已解锁 (点击退出授权)" : "管理员授权解锁"}
-			>
-				<span class="material-symbols-outlined text-[20px] transition-all duration-300 {quizStore.isAuthorizedToDelete ? 'text-primary animate-pulse' : 'text-on-surface-variant'}" style={quizStore.isAuthorizedToDelete ? "font-variation-settings: 'FILL' 1;" : ""}>passkey</span>
-			</button>
+			{#if quizStore.currentUser?.role === 'admin'}
+				<a
+					href="/management"
+					class="p-2 rounded-full transition-all flex items-center justify-center w-10 h-10 border border-outline-variant/15 text-primary bg-primary/10 border-primary/30"
+					title="系统后台管理中心"
+				>
+					<span class="material-symbols-outlined text-[20px] text-primary" style="font-variation-settings: 'FILL' 1;">admin_panel_settings</span>
+				</a>
+			{/if}
 			<button class="p-2 text-on-surface-variant hover:bg-surface-bright/10 rounded-full transition-all">
 				<span class="material-symbols-outlined">notifications</span>
 			</button>
@@ -257,11 +267,18 @@
 			</button>
 		</div>
 		
-		<img
-			alt="User profile"
-			class="w-8 h-8 rounded-full border border-outline/20 object-cover"
-			src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFuARggglZUX9iFXPWGYYfWkNE10Sh2a-kscze1lYf2aN5JQ2tbGv0Tu2f0MKNC3SGsaAvN4VRvftk3dVLj6y02GlKkZ6PYiK2nPFllj0oh5Trk39vzZRHrW5s0P5ScnAYKRYFTZHJwZdY8lqjLL3z14LYsg-9SkGrtZ3J_6z2iBuQur6GyUX1UOmjO-bP4gNjS_3mSdyT2dFn5OlPhbFMFl_abjXEHxZdnOdl3vWbOmUchIFzqVtQcZOTzRbcRQtkEX3S9fk-fKVj"
-		/>
+		{#if quizStore.currentUser}
+			<div class="flex items-center gap-2 border border-outline-variant/15 bg-surface-container-high/40 py-1 pl-3 pr-2.5 rounded-2xl">
+				<span class="font-label-md text-label-md text-primary font-bold">{quizStore.currentUser.nickname}</span>
+				<button
+					onclick={() => quizStore.logout()}
+					class="p-1 rounded-full text-on-surface-variant hover:text-error hover:bg-error-container/20 transition-all flex items-center justify-center"
+					title="注销登录"
+				>
+					<span class="material-symbols-outlined text-[18px]">logout</span>
+				</button>
+			</div>
+		{/if}
 	</div>
 </header>
 
@@ -344,6 +361,15 @@
 		<span class="material-symbols-outlined" style={page.url.pathname === '/assistant' ? "font-variation-settings: 'FILL' 1;" : ""}>psychology</span>
 		<span class="font-label-md text-xs mt-0.5">AI助理</span>
 	</a>
+	{#if quizStore.currentUser?.role === 'admin'}
+		<a
+			href="/management"
+			class="flex flex-col items-center justify-center {page.url.pathname === '/management' ? 'text-primary bg-primary-container/10 rounded-xl px-2 py-1 shadow-[0_0_15px_rgba(192,193,255,0.2)]' : 'text-on-surface-variant'}"
+		>
+			<span class="material-symbols-outlined" style={page.url.pathname === '/management' ? "font-variation-settings: 'FILL' 1;" : ""}>admin_panel_settings</span>
+			<span class="font-label-md text-xs mt-0.5">管理</span>
+		</a>
+	{/if}
 </nav>
 
 {#if parsedQuestionsPreview.length > 0}
@@ -391,6 +417,8 @@
 		</div>
 	</div>
 {/if}
+
+<UserAuthModal />
 
 
 
