@@ -80,3 +80,12 @@ CREATE TABLE IF NOT EXISTS knowledge_questions (
     keywords TEXT NOT NULL,       -- 以 JSON 字符串存储关键词列表：["keyword1", "keyword2"]
     mnemonic TEXT NOT NULL        -- 以 JSON 字符串存储记忆锚点映射：{"formula": "...", "scene": "...", "avoid": "..."}
 );
+
+-- 6. 插入默认超级管理员账号 (用户名: admin, 密码: admin888)
+-- 密码 hash 是 admin888 的 SHA-256 值: b409db24147c4fad753c13335eb705f4844b1c40cd5048363af32dcb48e58469
+INSERT OR IGNORE INTO users (username, nickname, password, role, created_at)
+VALUES ('admin', '超级管理员', 'b409db24147c4fad753c13335eb705f4844b1c40cd5048363af32dcb48e58469', 'admin', CURRENT_TIMESTAMP);
+
+-- 7. 插入默认公开编程题库
+INSERT OR IGNORE INTO question_banks (id, name, creator, is_global, created_at)
+VALUES (1, '默认编程题库', 'admin', 1, CURRENT_TIMESTAMP);
