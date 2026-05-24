@@ -85,18 +85,26 @@
 					{#if quizStore.hasSavedProgress && quizStore.savedSessionDetails}
 						<button
 							onclick={resumePractice}
-							class="px-8 py-4 bg-gradient-to-r from-[#10B981] to-[#3B82F6] text-white font-bold rounded-2xl hover:scale-105 active:scale-95 transition-all cursor-pointer shadow-[0_0_25px_rgba(16,185,129,0.3)] inline-flex items-center gap-2"
+							class="px-8 py-4 bg-gradient-to-r from-[#6366F1] to-[#A855F7] text-white font-bold rounded-2xl primary-glow hover:scale-105 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
 						>
 							<span class="material-symbols-outlined animate-pulse">play_circle</span>
 							继续上次练习 ({modeText()} | 第 {quizStore.savedSessionDetails.questionNumber} / {quizStore.savedSessionDetails.totalQuestions} 题)
 						</button>
+						<button
+							onclick={() => startPractice('sequential')}
+							class="px-8 py-4 border border-outline-variant/30 text-on-surface hover:bg-surface-bright/10 font-bold rounded-2xl transition-all active:scale-95 cursor-pointer inline-flex items-center gap-2"
+						>
+							<span class="material-symbols-outlined">restart_alt</span>
+							重新开始
+						</button>
+					{:else}
+						<button
+							onclick={() => startPractice('sequential')}
+							class="px-8 py-4 bg-gradient-to-r from-[#6366F1] to-[#A855F7] text-white font-bold rounded-2xl primary-glow hover:scale-105 active:scale-95 transition-all cursor-pointer"
+						>
+							立即开始练习
+						</button>
 					{/if}
-					<button
-						onclick={() => startPractice('sequential')}
-						class="px-8 py-4 bg-gradient-to-r from-[#6366F1] to-[#A855F7] text-white font-bold rounded-2xl primary-glow hover:scale-105 active:scale-95 transition-all cursor-pointer"
-					>
-						立即开始练习
-					</button>
 					<a
 						href="/wrong"
 						class="px-8 py-4 border border-outline-variant/30 text-on-surface hover:bg-surface-bright/10 font-bold rounded-2xl transition-all inline-flex items-center gap-2 active:scale-95"
