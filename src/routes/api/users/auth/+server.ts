@@ -91,7 +91,8 @@ export const POST: RequestHandler = async ({ request, platform, cookies }) => {
 				success: true,
 				user: {
 					username: cleanUsername,
-					nickname: cleanNickname
+					nickname: cleanNickname,
+					role: 'user'
 				}
 			});
 		}
@@ -124,7 +125,8 @@ export const POST: RequestHandler = async ({ request, platform, cookies }) => {
 				success: true,
 				user: {
 					username: existingUser.username,
-					nickname: existingUser.nickname
+					nickname: existingUser.nickname,
+					role: existingUser.role
 				}
 			});
 		}

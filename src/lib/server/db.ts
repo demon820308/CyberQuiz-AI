@@ -631,3 +631,14 @@ export async function updateUserPassword(db: D1Database, username: string, passw
 	}
 }
 
+export async function updateUserNickname(db: D1Database, username: string, nickname: string): Promise<boolean> {
+	try {
+		const cleanUser = username.trim().toLowerCase();
+		await db.prepare('UPDATE users SET nickname = ? WHERE username = ?').bind(nickname.trim(), cleanUser).run();
+		return true;
+	} catch (e) {
+		console.error('[DB Error] updateUserNickname:', e);
+		throw e;
+	}
+}
+

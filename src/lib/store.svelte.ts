@@ -585,6 +585,56 @@ class QuizStore {
 		}
 	}
 
+	async updateProfileNickname(nickname: string): Promise<{ success: boolean; error?: string }> {
+		if (!this.currentUser) return { success: false, error: '请先登录' };
+		try {
+			const res = await fetch('/api/users/profile', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-User-Username': this.currentUser.username
+				},
+				body: JSON.stringify({ action: 'updateNickname', nickname })
+			});
+			const result = (await res.json()) as any;
+			if (result.success) {
+				this.currentUser = { ...this.currentUser, nickname: result.nickname };
+				if (browser) {
+					localStorage.setItem('cq_current_user', JSON.stringify(this.currentUser));
+				}
+				this.showToast('昵称更新成功！', 'success');
+				return { success: true };
+			} else {
+				return { success: false, error: result.error };
+			}
+		} catch (e: any) {
+			return { success: false, error: e.message || '网络连接失败，请重试' };
+		}
+	}
+
+	async updateProfilePassword(newPassword: string): Promise<{ success: boolean; error?: string }> {
+		if (!this.currentUser) return { success: false, error: '请先登录' };
+		try {
+			const res = await fetch('/api/users/profile', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-User-Username': this.currentUser.username
+				},
+				body: JSON.stringify({ action: 'updatePassword', newPassword })
+			});
+			const result = (await res.json()) as any;
+			if (result.success) {
+				this.showToast('密码更新成功！', 'success');
+				return { success: true };
+			} else {
+				return { success: false, error: result.error };
+			}
+		} catch (e: any) {
+			return { success: false, error: e.message || '网络连接失败，请重试' };
+		}
+	}
+
 	// Bank and admin management actions
 	async fetchBanks() {
 		if (!this.currentUser) return;

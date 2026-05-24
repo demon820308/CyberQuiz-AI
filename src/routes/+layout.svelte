@@ -6,6 +6,7 @@
 	import { parseMarkdown } from '$lib/utils/mdParser';
 	import ParserPreviewModal from '$lib/components/ParserPreviewModal.svelte';
 	import UserAuthModal from '$lib/components/UserAuthModal.svelte';
+	import UserSettingsModal from '$lib/components/UserSettingsModal.svelte';
 
 	import type { Question } from '$lib/types';
 	import { untrack } from 'svelte';
@@ -77,6 +78,7 @@
 
 	let showPasswordPrompt = $state(false);
 	let enteredPassword = $state('');
+	let isSettingsOpen = $state(false);
 
 	function openPasswordPrompt() {
 		if (quizStore.isAuthorizedToDelete) {
@@ -262,7 +264,17 @@
 			<button class="p-2 text-on-surface-variant hover:bg-surface-bright/10 rounded-full transition-all">
 				<span class="material-symbols-outlined">notifications</span>
 			</button>
-			<button class="p-2 text-on-surface-variant hover:bg-surface-bright/10 rounded-full transition-all">
+			<button
+				onclick={() => {
+					if (quizStore.currentUser) {
+						isSettingsOpen = true;
+					} else {
+						quizStore.showToast('请先登录以进行个人设置', 'error');
+					}
+				}}
+				class="p-2 text-on-surface-variant hover:bg-surface-bright/10 rounded-full transition-all"
+				title="个人设置"
+			>
 				<span class="material-symbols-outlined">settings</span>
 			</button>
 		</div>
@@ -419,6 +431,7 @@
 {/if}
 
 <UserAuthModal />
+<UserSettingsModal bind:isOpen={isSettingsOpen} />
 
 
 

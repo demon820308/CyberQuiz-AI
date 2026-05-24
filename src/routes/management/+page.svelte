@@ -48,6 +48,7 @@
 	onMount(async () => {
 		if (quizStore.currentUser?.role === 'admin') {
 			users = await quizStore.fetchUsers();
+			await quizStore.fetchBanks();
 		}
 	});
 
@@ -418,6 +419,52 @@
 								{/if}
 							</button>
 						</form>
+					</div>
+
+					<!-- Public Question Banks Management Card -->
+					<div class="glass-card p-6 rounded-[28px] border border-outline-variant/20 bg-surface/30 space-y-4">
+						<div class="space-y-1">
+							<h3 class="font-title-md text-on-surface font-extrabold flex items-center gap-2">
+								<span class="material-symbols-outlined text-primary">database</span>
+								<span>公共题库管理</span>
+							</h3>
+							<p class="text-xs text-on-surface-variant">管理系统中已发布的所有公共选择题库。删除题库会同时物理销毁其下所有题目。</p>
+						</div>
+
+						<!-- List of global/public banks -->
+						<div class="space-y-2.5 max-h-[300px] overflow-y-auto pr-1">
+							{#each quizStore.questionBanks.filter(b => b.is_global === 1) as bank (bank.id)}
+								<div class="flex items-center justify-between p-3 bg-surface-container/40 border border-outline-variant/15 rounded-xl hover:border-primary/25 transition-colors font-sans">
+									<div class="space-y-1 pr-4">
+										<div class="font-bold text-xs text-on-surface flex items-center gap-1.5">
+											{bank.name}
+											{#if quizStore.activeBankId === bank.id}
+												<span class="text-[9px] bg-primary/10 text-primary border border-primary/25 px-1.5 py-0.5 rounded font-bold">激活中</span>
+											{/if}
+										</div>
+										<div class="text-[10px] text-on-surface-variant/80">
+											ID: {bank.id} • 上传者: {bank.creator}
+										</div>
+									</div>
+									
+									<button
+										onclick={async () => {
+											if (confirm(`确认删除公共题库「${bank.name}」吗？\n该操作将物理删除数据库中该题库及其关联的所有客观选择题，且无法恢复！`)) {
+												await quizStore.deleteBank(bank.id);
+											}
+										}}
+										class="p-1.5 rounded-lg border border-error/25 bg-error/5 text-error hover:bg-error/15 transition-all cursor-pointer shrink-0"
+										title="物理删除此题库"
+									>
+										<span class="material-symbols-outlined text-[16px]">delete</span>
+									</button>
+								</div>
+							{:else}
+								<div class="text-center py-6 text-xs text-on-surface-variant/60 font-bold">
+									暂无公开题库
+								</div>
+							{/each}
+						</div>
 					</div>
 
 				</div>
