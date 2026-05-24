@@ -45,6 +45,17 @@ export const load: LayoutServerLoad = async ({ platform, cookies }) => {
 		return { questions: [], wrongBook: [], history: [], progress: null, knowledgeQuestions: [], user: null, isD1: false, dbError: null };
 	}
 
+	// Proactive self-healing: run initialization if 'users' table is missing
+	try {
+		const checkTable = await db.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='users'").first();
+		if (!checkTable) {
+			console.log('[DB] "users" table is missing. Running auto-initialization...');
+			await initializeDatabase(db);
+		}
+	} catch (err) {
+		console.error('[DB Migration Check Error]:', err);
+	}
+
 	try {
 		const data = await loadData(db, username);
 		return {
