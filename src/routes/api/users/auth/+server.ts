@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { getUser, createUser, initializeDatabase } from '$lib/server/db';
+import { getUser, createUser } from '$lib/server/db';
 import type { User } from '$lib/types';
 
 // Helper to hash password using Web Crypto API (Cloudflare Worker compatible)
@@ -18,15 +18,15 @@ export const POST: RequestHandler = async ({ request, platform, cookies }) => {
 		return json({ success: false, error: 'Database binding not found' }, { status: 500 });
 	}
 
-	// Proactive self-healing: run initialization if 'users' table is missing
+	// Verify database is manually initialized
 	try {
 		const checkTable = await db.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='users'").first();
 		if (!checkTable) {
-			console.log('[DB API Auth] "users" table is missing. Running auto-initialization...');
-			await initializeDatabase(db);
+			return json({ success: false, error: '数据库未初始化，未检测到 users 表。请先按照 README.md 指南手动创建数据库表结构。' }, { status: 500 });
 		}
-	} catch (err) {
-		console.error('[DB API Auth Migration Check Error]:', err);
+	} catch (err: any) {
+		console.error('[DB API Auth Check Error]:', err);
+		return json({ success: false, error: `数据库无法正常访问: ${err.message || String(err)}` }, { status: 500 });
 	}
 
 	try {

@@ -1,4 +1,4 @@
-import { getAllQuestions, getWrongRecords, getQuizHistory, getSessionProgress, initializeDatabase, getAllKnowledgeQuestions, getUser } from '$lib/server/db';
+import { getAllQuestions, getWrongRecords, getQuizHistory, getSessionProgress, getAllKnowledgeQuestions, getUser } from '$lib/server/db';
 import type { LayoutServerLoad } from './$types';
 
 async function loadData(db: D1Database, username?: string) {
@@ -45,15 +45,23 @@ export const load: LayoutServerLoad = async ({ platform, cookies }) => {
 		return { questions: [], wrongBook: [], history: [], progress: null, knowledgeQuestions: [], user: null, isD1: false, dbError: null };
 	}
 
-	// Proactive self-healing: run initialization if 'users' table is missing
+	// Check if the database has been manually initialized (check 'users' table)
 	try {
 		const checkTable = await db.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='users'").first();
 		if (!checkTable) {
-			console.log('[DB] "users" table is missing. Running auto-initialization...');
-			await initializeDatabase(db);
+			return {
+				questions: [],
+				wrongBook: [],
+				history: [],
+				progress: null,
+				knowledgeQuestions: [],
+				user: null,
+				isD1: true,
+				dbError: '数据库初始化失败: 未检测到数据库表结构（如 users 表不存在）。请确保已按照 README.md 指南在 Cloudflare 控制台或使用 wrangler 命令行手动创建并初始化表结构。'
+			};
 		}
 	} catch (err: any) {
-		console.error('[DB Migration Check Error]:', err);
+		console.error('[DB Check Error]:', err);
 		return {
 			questions: [],
 			wrongBook: [],
@@ -62,7 +70,7 @@ export const load: LayoutServerLoad = async ({ platform, cookies }) => {
 			knowledgeQuestions: [],
 			user: null,
 			isD1: true,
-			dbError: `数据库初始化失败: ${err.message || String(err)}`
+			dbError: `数据库访问失败: ${err.message || String(err)}`
 		};
 	}
 
@@ -74,32 +82,12 @@ export const load: LayoutServerLoad = async ({ platform, cookies }) => {
 			dbError: null
 		};
 	} catch (e: any) {
-		const errorStr = String(e.message || e);
-		if (errorStr.includes('no such table')) {
-			try {
-				await initializeDatabase(db);
-				const data = await loadData(db, username);
-				return {
-					...data,
-					isD1: true,
-					dbError: null
-				};
-			} catch (initErr: any) {
-				console.error('[DB Auto-Init Failed]:', initErr);
-				return {
-					questions: [],
-					wrongBook: [],
-					history: [],
-					progress: null,
-					knowledgeQuestions: [],
-					user: null,
-					isD1: true,
-					dbError: initErr.message || String(initErr)
-				};
-			}
-		}
-
 		console.error('[Layout Server Load Error]:', e);
+		const errorStr = String(e.message || e);
+		let userFriendlyError = errorStr;
+		if (errorStr.includes('no such table')) {
+			userFriendlyError = '未检测到完整的数据库表结构，请确保已按照 README.md 手动执行了完整的初始化 SQL 语句。';
+		}
 		return {
 			questions: [],
 			wrongBook: [],
@@ -108,7 +96,7 @@ export const load: LayoutServerLoad = async ({ platform, cookies }) => {
 			knowledgeQuestions: [],
 			user: null,
 			isD1: true,
-			dbError: e.message || String(e)
+			dbError: `数据库加载失败: ${userFriendlyError}`
 		};
 	}
 };

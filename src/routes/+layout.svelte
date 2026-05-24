@@ -76,54 +76,7 @@
 		fileInput?.click();
 	}
 
-	let showPasswordPrompt = $state(false);
-	let enteredPassword = $state('');
 	let isSettingsOpen = $state(false);
-
-	function openPasswordPrompt() {
-		if (quizStore.isAuthorizedToDelete) {
-			quizStore.isAuthorizedToDelete = false;
-			quizStore.adminPassword = '';
-			localStorage.removeItem('cq_admin_auth');
-			quizStore.showToast('已安全退出管理员授权状态', 'success');
-		} else {
-			enteredPassword = '';
-			showPasswordPrompt = true;
-		}
-	}
-
-	async function submitPassword() {
-		if (!enteredPassword) {
-			quizStore.showToast('请输入管理密码！', 'error');
-			return;
-		}
-
-		try {
-			const res = await fetch('/api/knowledge/verify', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ password: enteredPassword })
-			});
-			const verifyResult = await res.json() as any;
-			if (verifyResult.success) {
-				quizStore.isAuthorizedToDelete = true;
-				quizStore.adminPassword = enteredPassword;
-				// Persist auth state + password for 24 hours
-				localStorage.setItem('cq_admin_auth', JSON.stringify({
-					v: 1,
-					pw: enteredPassword,
-					exp: Date.now() + 24 * 60 * 60 * 1000
-				}));
-				showPasswordPrompt = false;
-				quizStore.showToast('管理员权限解锁成功！24小时内免验证', 'success');
-			} else {
-				quizStore.showToast(verifyResult.error || '密码验证失败', 'error');
-			}
-		} catch (e) {
-			console.error('Password verification error:', e);
-			quizStore.showToast('校验失败，网络连接异常', 'error');
-		}
-	}
 
 	let showDbWarning = $state(true);
 </script>
@@ -375,43 +328,7 @@
 	/>
 {/if}
 
-{#if showPasswordPrompt}
-	<div class="fixed inset-0 z-[1000] flex items-center justify-center bg-[#0b1326]/85 backdrop-blur-md p-4 animate-in fade-in duration-300">
-		<div class="w-full max-w-sm glass-card rounded-3xl p-6 md:p-8 border border-primary/30 cyber-glow-primary text-center space-y-5 animate-in zoom-in-95 duration-300 relative overflow-hidden">
-			<!-- Decorative glowing bubble -->
-			<div class="absolute -top-16 -right-16 w-32 h-32 bg-primary/10 rounded-full blur-[40px] pointer-events-none"></div>
 
-			<span class="material-symbols-outlined text-primary text-4xl animate-bounce">admin_panel_settings</span>
-			<div>
-				<h3 class="font-headline-sm text-headline-sm text-on-surface font-extrabold">管理员授权验证</h3>
-				<p class="text-xs text-on-surface-variant mt-1.5 leading-relaxed">请输入管理密码以解锁知识问答题目的删除权限</p>
-			</div>
-			
-			<input
-				type="password"
-				bind:value={enteredPassword}
-				placeholder="请输入管理密码"
-				class="w-full bg-[#0b1326]/60 border border-outline-variant/20 focus:border-primary rounded-xl px-4 py-2.5 text-xs text-on-surface text-center outline-none transition-all"
-				onkeydown={(e) => e.key === 'Enter' && submitPassword()}
-			/>
-			
-			<div class="flex justify-end gap-3 pt-2">
-				<button
-					onclick={() => showPasswordPrompt = false}
-					class="px-4 py-2.5 border border-outline-variant/30 text-on-surface hover:bg-surface-bright/10 text-xs font-bold rounded-xl transition-all cursor-pointer active:scale-95"
-				>
-					取消
-				</button>
-				<button
-					onclick={submitPassword}
-					class="px-5 py-2.5 bg-primary text-white text-xs font-bold rounded-xl hover:bg-primary/80 transition-all cursor-pointer active:scale-95 shadow-md shadow-primary/15"
-				>
-					确认解锁
-				</button>
-			</div>
-		</div>
-	</div>
-{/if}
 
 <UserAuthModal />
 <UserSettingsModal bind:isOpen={isSettingsOpen} />
