@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { quizStore } from '$lib/store.svelte';
 	import { fade, scale } from 'svelte/transition';
+	import { parseMarkdown } from '$lib/utils/mdParser';
 
 	// Props
 	let { isOpen = $bindable(false) } = $props();
@@ -72,6 +73,53 @@
 		} else {
 			errorMessage = res.error || '修改失败，请重试';
 		}
+	}
+
+	let fileInput = $state<HTMLInputElement | null>(null);
+
+	function triggerUpload() {
+		fileInput?.click();
+	}
+
+	function handleFileUpload(event: Event) {
+		errorMessage = null;
+		infoMessage = null;
+		const target = event.target as HTMLInputElement;
+		const file = target.files?.[0];
+		if (!file) return;
+
+		const reader = new FileReader();
+		reader.onload = async (e) => {
+			const text = e.target?.result as string;
+			if (text) {
+				try {
+					const parsed = parseMarkdown(text);
+					if (parsed.length > 0) {
+						isLoading = true;
+						const bankName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+						const success = await quizStore.uploadBank(bankName, parsed, false);
+						isLoading = false;
+						if (success) {
+							infoMessage = `成功导入题库并自动应用「${bankName}」！`;
+							
+							// Auto apply the newly uploaded bank
+							await quizStore.fetchBanks();
+							const newBank = quizStore.questionBanks.find(b => b.name === bankName && b.creator === quizStore.currentUser?.username);
+							if (newBank) {
+								quizStore.applyBank(newBank.id);
+							}
+						}
+					} else {
+						errorMessage = '未解析到有效选择题，请检查 Markdown 格式';
+					}
+				} catch (err) {
+					console.error('Failed to parse upload:', err);
+					errorMessage = '解析失败，请检查 Markdown 格式';
+				}
+			}
+		};
+		reader.readAsText(file);
+		target.value = '';
 	}
 </script>
 
@@ -245,6 +293,34 @@
 						<span>修改密码</span>
 					</button>
 				</form>
+
+				<div class="border-t border-outline-variant/10 my-4"></div>
+
+				<!-- Section 3: Upload Private Bank -->
+				<div class="space-y-3">
+					<div class="space-y-1">
+						<label class="font-label-sm text-on-surface-variant text-xs font-bold ml-0.5">上传私人客观题库</label>
+						<p class="text-[10px] text-on-surface-variant/80">仅支持 Markdown 格式。上传后将自动创建为一个新的个人题库并应用装载。</p>
+					</div>
+
+					<input
+						type="file"
+						accept=".md,.txt"
+						class="hidden"
+						bind:this={fileInput}
+						onchange={handleFileUpload}
+					/>
+
+					<button
+						type="button"
+						onclick={triggerUpload}
+						class="w-full py-2.5 bg-secondary-container/20 border border-secondary/30 text-secondary hover:bg-secondary-container/30 font-label-sm text-xs font-bold rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+						disabled={isLoading}
+					>
+						<span class="material-symbols-outlined text-[18px]">upload_file</span>
+						<span>导入本地 MD 选择题库</span>
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>
