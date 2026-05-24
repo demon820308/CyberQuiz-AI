@@ -221,15 +221,6 @@
 				<span class="font-label-md text-label-md">知识问答题</span>
 			</a>
 
-			<!-- Upload Button -->
-			<button
-				onclick={triggerUpload}
-				class="flex items-center gap-2 bg-primary-container/20 border border-primary/30 text-primary px-4 py-2 rounded-xl hover:bg-primary-container/30 transition-all duration-300 active:scale-95"
-			>
-				<span class="material-symbols-outlined text-[20px]">upload_file</span>
-				<span class="font-label-md text-label-md">答题库上传MD</span>
-			</button>
-
 		</div>
 
 		<!-- Mobile Buttons -->
@@ -241,14 +232,6 @@
 			>
 				<span class="material-symbols-outlined">book</span>
 			</a>
-			<button
-				onclick={triggerUpload}
-				class="p-2 text-primary hover:bg-surface-bright/10 rounded-full transition-all"
-				title="答题库上传MD"
-			>
-				<span class="material-symbols-outlined">upload_file</span>
-			</button>
-
 		</div>
 
 		<div class="flex gap-1 md:gap-2">
