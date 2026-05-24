@@ -15,6 +15,44 @@
 	let errorMessage = $state<string | null>(null);
 	let isLoading = $state(false);
 
+	// Confirmation modal for changing banks
+	let showConfirmModal = $state(false);
+	let pendingBankId = $state<number | null>(null);
+	let pendingBankName = $state('');
+
+	function onSelectChange(e: Event) {
+		const selectElement = e.target as HTMLSelectElement;
+		const targetId = parseInt(selectElement.value);
+		if (isNaN(targetId)) return;
+
+		if (targetId === quizStore.activeBankId) return;
+
+		const targetBank = quizStore.questionBanks.find(b => b.id === targetId);
+		const targetName = targetBank ? targetBank.name : '未知题库';
+
+		pendingBankId = targetId;
+		pendingBankName = targetName;
+		showConfirmModal = true;
+
+		// Revert the selector view temporarily until confirmed
+		selectElement.value = String(quizStore.activeBankId || '');
+	}
+
+	async function confirmBankSwitch() {
+		showConfirmModal = false;
+		if (pendingBankId !== null) {
+			isLoading = true;
+			await quizStore.applyBank(pendingBankId);
+			isLoading = false;
+		}
+	}
+
+	function cancelBankSwitch() {
+		showConfirmModal = false;
+		pendingBankId = null;
+		pendingBankName = '';
+	}
+
 	// Synchronize nickname when modal opens
 	$effect(() => {
 		if (isOpen && quizStore.currentUser) {
@@ -173,14 +211,14 @@
 					选择当前答题页面需要装载应用的客观选择题库：
 				</p>
 				
+				<div class="text-[11px] text-on-surface-variant/90 bg-[#0b1326]/40 px-3 py-2 rounded-xl border border-outline-variant/10 flex items-center justify-between">
+					<span>当前选择：</span>
+					<span class="text-primary font-extrabold">{quizStore.activeBankName}</span>
+				</div>
+
 				<select
 					value={quizStore.activeBankId || ''}
-					onchange={(e) => {
-						const targetId = parseInt((e.target as HTMLSelectElement).value);
-						if (!isNaN(targetId)) {
-							quizStore.applyBank(targetId);
-						}
-					}}
+					onchange={onSelectChange}
 					class="w-full bg-[#0b1326]/60 border border-outline-variant/20 focus:border-primary rounded-xl px-3 py-2 text-xs text-on-surface outline-none transition-all cursor-pointer font-bold font-sans"
 				>
 					<!-- Public/Global banks -->
@@ -324,4 +362,43 @@
 			</div>
 		</div>
 	</div>
+
+	{#if showConfirmModal}
+		<div
+			transition:fade={{ duration: 200 }}
+			class="fixed inset-0 z-[1050] flex items-center justify-center bg-black/70 backdrop-blur-md px-4"
+			onclick={cancelBankSwitch}
+		>
+			<div
+				transition:scale={{ start: 0.95, duration: 150 }}
+				class="relative bg-[#0b1326]/95 border border-outline-variant/30 backdrop-blur-lg shadow-2xl rounded-[24px] p-6 max-w-[360px] w-full space-y-4 text-center"
+				onclick={(e) => e.stopPropagation()}
+			>
+				<div class="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center border border-primary/20 text-primary">
+					<span class="material-symbols-outlined text-[24px]">swap_horizontal_circle</span>
+				</div>
+				<div class="space-y-2">
+					<h4 class="font-headline-sm text-headline-sm font-extrabold text-on-surface">确认切换题库？</h4>
+					<p class="text-xs text-on-surface-variant leading-relaxed">
+						确定要切换到题库 <span class="text-primary font-bold">「{pendingBankName}」</span> 吗？
+						切换后将重新装载题库并重置答题进度。
+					</p>
+				</div>
+				<div class="flex gap-3 pt-2">
+					<button
+						onclick={cancelBankSwitch}
+						class="flex-1 py-2.5 border border-outline-variant/30 text-on-surface-variant hover:bg-surface-bright/10 font-bold rounded-xl text-xs transition-all active:scale-[0.98] cursor-pointer"
+					>
+						取消
+					</button>
+					<button
+						onclick={confirmBankSwitch}
+						class="flex-1 py-2.5 bg-primary text-on-primary font-bold rounded-xl text-xs hover:bg-primary/90 transition-all active:scale-[0.98] cursor-pointer shadow-md shadow-primary/10"
+					>
+						确认切换
+					</button>
+				</div>
+			</div>
+		</div>
+	{/if}
 {/if}

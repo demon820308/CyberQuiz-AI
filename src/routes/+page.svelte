@@ -75,7 +75,7 @@
 					AI 智能备考系统已就绪
 				</div>
 				<h2 class="font-headline-xl text-headline-xl mb-4 text-on-surface leading-tight">
-					准备好开始刷题了吗？
+					准备好开始刷题了吗？<span class="text-primary font-bold">（当前题库：{quizStore.activeBankName}）</span>
 				</h2>
 				<p class="font-body-lg text-body-lg text-on-surface-variant">
 					当前题库共 <span class="text-primary font-bold">{totalQuestions}</span> 道题，错题本中存有

@@ -1173,6 +1173,11 @@ class QuizStore {
 		}
 	}
 
+	get activeBankName(): string {
+		const bank = this.questionBanks.find(b => b.id === this.activeBankId);
+		return bank ? bank.name : '默认编程题库';
+	}
+
 	get currentQuestion(): Question | null {
 		if (this.activeQuestions.length > 0 && this.currentIndex < this.activeQuestions.length) {
 			return this.activeQuestions[this.currentIndex];
