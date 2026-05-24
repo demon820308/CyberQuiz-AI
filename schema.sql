@@ -1,3 +1,12 @@
+-- 1.5. 用户账户表 users (增加 role 字段)
+CREATE TABLE IF NOT EXISTS users (
+    username TEXT PRIMARY KEY,
+    nickname TEXT NOT NULL,
+    password TEXT NOT NULL,
+    role TEXT CHECK(role IN ('user', 'admin')) DEFAULT 'user',
+    created_at TEXT NOT NULL
+);
+
 -- 1. 题库分类表 (选择题库)
 CREATE TABLE IF NOT EXISTS question_banks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -11,7 +20,7 @@ CREATE TABLE IF NOT EXISTS question_banks (
 -- 1.2. 题库主表 questions (增加 bank_id 字段关联题库)
 CREATE TABLE IF NOT EXISTS questions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    bank_id INTEGER,                        -- 关联的题库ID
+    bank_id INTEGER,                        -- 关联 of 题库ID
     type TEXT CHECK(type IN ('single', 'multiple')) NOT NULL,
     title TEXT NOT NULL,
     options TEXT NOT NULL,       -- 以 JSON 字符串存储映射：{"A": "选项A", "B": "...", ...}
@@ -20,15 +29,6 @@ CREATE TABLE IF NOT EXISTS questions (
     difficulty TEXT CHECK(difficulty IN ('easy', 'medium', 'hard')) NOT NULL,
     category TEXT NOT NULL,
     knowledgeTags TEXT           -- 以 JSON 字符串存储标签列表：["Python", "OOP"]
-);
-
--- 1.5. 用户账户表 users (增加 role 字段)
-CREATE TABLE IF NOT EXISTS users (
-    username TEXT PRIMARY KEY,
-    nickname TEXT NOT NULL,
-    password TEXT NOT NULL,
-    role TEXT CHECK(role IN ('user', 'admin')) DEFAULT 'user',
-    created_at TEXT NOT NULL
 );
 
 -- 2. 错题本 wrong_book (联合主键支持多用户相同题目错题记录)
