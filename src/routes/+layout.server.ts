@@ -52,8 +52,18 @@ export const load: LayoutServerLoad = async ({ platform, cookies }) => {
 			console.log('[DB] "users" table is missing. Running auto-initialization...');
 			await initializeDatabase(db);
 		}
-	} catch (err) {
+	} catch (err: any) {
 		console.error('[DB Migration Check Error]:', err);
+		return {
+			questions: [],
+			wrongBook: [],
+			history: [],
+			progress: null,
+			knowledgeQuestions: [],
+			user: null,
+			isD1: true,
+			dbError: `数据库初始化失败: ${err.message || String(err)}`
+		};
 	}
 
 	try {
