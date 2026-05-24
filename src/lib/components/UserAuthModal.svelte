@@ -104,7 +104,7 @@
 </script>
 
 <!-- Full Screen Modal Cover -->
-{#if quizStore.hydrated && quizStore.currentUser === null}
+{#if quizStore.hydrated && quizStore.currentUser === null && !quizStore.dbError}
 	<div
 		transition:fade={{ duration: 400 }}
 		class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-xl px-4 py-8"
