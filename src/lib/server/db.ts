@@ -351,14 +351,8 @@ export async function initializeDatabase(db: D1Database): Promise<void> {
 		);
 	`;
 
-	const statements = baseSchema
-		.split(';')
-		.map(s => s.trim())
-		.filter(s => s.length > 0);
-
-	for (const statement of statements) {
-		await db.exec(statement);
-	}
+	// Cloudflare D1 exec() executes the entire SQL script directly, preserving formatting and semicolons.
+	await db.exec(baseSchema);
 
 	// 2. Perform safe alterations for existing database migrations
 	try {
@@ -373,6 +367,16 @@ export async function initializeDatabase(db: D1Database): Promise<void> {
 	}
 	try {
 		await db.exec("ALTER TABLE session_progress ADD COLUMN active_bank_id INTEGER;");
+	} catch (e) {
+		// Ignore if column already exists
+	}
+	try {
+		await db.exec("ALTER TABLE wrong_book ADD COLUMN username TEXT NOT NULL DEFAULT 'local_default';");
+	} catch (e) {
+		// Ignore if column already exists
+	}
+	try {
+		await db.exec("ALTER TABLE quiz_history ADD COLUMN username TEXT NOT NULL DEFAULT 'local_default';");
 	} catch (e) {
 		// Ignore if column already exists
 	}
