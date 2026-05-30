@@ -80,11 +80,11 @@
 
 	let showDbWarning = $state(true);
 
-	let activeTheme = $state('cyber');
+	let activeTheme = $state('pi-light');
 	let isThemeMenuOpen = $state(false);
 
 	$effect(() => {
-		const savedTheme = localStorage.getItem('cq_theme') || 'cyber';
+		const savedTheme = localStorage.getItem('cq_theme') || 'pi-light';
 		activeTheme = savedTheme;
 		document.documentElement.setAttribute('data-theme', savedTheme);
 	});

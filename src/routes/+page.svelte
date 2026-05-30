@@ -121,7 +121,7 @@
 				<div class="floating relative">
 					<img
 						alt="Cyber Bookshelf 3D Graphic"
-						class="w-72 h-72 object-contain drop-shadow-[0_0_40px_rgba(99,102,241,0.4)]"
+						class="w-72 h-72 object-contain drop-shadow-[0_0_40px_rgba(99,102,241,0.4)] cyber-book-img"
 						src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdwYHKeS--NW7HBcAovF1jbSFCWXtGY0HZD5fR_lAGTVKcxpmvGJAOLmW_hJWT14gJDDFHJf-F8okfOTiS8fuCap6XIISzRlaOYMvUZ21v8OLbe1foRoKptLNtmXGfN8ksAWACh6qZmkXxGfL3MJahdQzzt9-N26fsttxz6NoEM3tN746EAIQwvGIwSWFUcxdYKJMRW76g32wrpPy1H6Pc7expagtlOIg8Ue-GtZ9MjtipqPdMc_ODrP4SVxWwltG8uU93x9O6d8rh"
 					/>
 				</div>

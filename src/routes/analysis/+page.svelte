@@ -141,7 +141,7 @@
 				<div class="absolute w-40 h-40 bg-indigo-500/10 rounded-full blur-[60px] animate-pulse"></div>
 				<img
 					alt="Dashboard Abstract"
-					class="w-36 h-36 object-contain rounded-3xl transform rotate-12 glass-card border-indigo-500/30"
+					class="w-36 h-36 object-contain rounded-3xl transform rotate-12 glass-card border-indigo-500/30 cyber-book-img"
 					src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdwYHKeS--NW7HBcAovF1jbSFCWXtGY0HZD5fR_lAGTVKcxpmvGJAOLmW_hJWT14gJDDFHJf-F8okfOTiS8fuCap6XIISzRlaOYMvUZ21v8OLbe1foRoKptLNtmXGfN8ksAWACh6qZmkXxGfL3MJahdQzzt9-N26fsttxz6NoEM3tN746EAIQwvGIwSWFUcxdYKJMRW76g32wrpPy1H6Pc7expagtlOIg8Ue-GtZ9MjtipqPdMc_ODrP4SVxWwltG8uU93x9O6d8rh"
 				/>
 			</div>
