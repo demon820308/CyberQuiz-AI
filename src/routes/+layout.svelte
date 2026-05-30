@@ -79,6 +79,32 @@
 	let isSettingsOpen = $state(false);
 
 	let showDbWarning = $state(true);
+
+	let activeTheme = $state('cyber');
+	let isThemeMenuOpen = $state(false);
+
+	$effect(() => {
+		const savedTheme = localStorage.getItem('cq_theme') || 'cyber';
+		activeTheme = savedTheme;
+		document.documentElement.setAttribute('data-theme', savedTheme);
+	});
+
+	function setTheme(themeName: string) {
+		activeTheme = themeName;
+		localStorage.setItem('cq_theme', themeName);
+		document.documentElement.setAttribute('data-theme', themeName);
+		isThemeMenuOpen = false;
+		quizStore.showToast(`主题已切换为：${getThemeDisplayName(themeName)}`, 'success');
+	}
+
+	function getThemeDisplayName(themeName: string) {
+		switch (themeName) {
+			case 'cyber': return '赛博霓虹';
+			case 'pi-light': return '极简浅色 (Pi)';
+			case 'pi-dark': return '极简深色 (Pi)';
+			default: return themeName;
+		}
+	}
 </script>
 
 <svelte:head>
@@ -200,6 +226,61 @@
 			<button class="p-2 text-on-surface-variant hover:bg-surface-bright/10 rounded-full transition-all">
 				<span class="material-symbols-outlined">notifications</span>
 			</button>
+
+			<!-- Dynamic Theme Selector Button -->
+			<div class="relative">
+				<button
+					onclick={() => isThemeMenuOpen = !isThemeMenuOpen}
+					class="p-2 text-on-surface-variant hover:bg-surface-bright/10 rounded-full transition-all flex items-center justify-center w-10 h-10 border border-outline-variant/10 cursor-pointer"
+					title="切换系统主题风格"
+				>
+					<span class="material-symbols-outlined text-[20px]">
+						{activeTheme === 'cyber' ? 'palette' : activeTheme === 'pi-light' ? 'light_mode' : 'dark_mode'}
+					</span>
+				</button>
+				
+				{#if isThemeMenuOpen}
+					<!-- Dropdown Backdrop to close on click outside -->
+					<div class="fixed inset-0 z-40" onclick={() => isThemeMenuOpen = false}></div>
+					
+					<div class="absolute right-0 mt-2.5 w-52 glass-card rounded-2xl p-2 border border-outline-variant/20 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-200">
+						<div class="px-3 py-1.5 text-[10px] font-bold tracking-widest text-on-surface-variant/50 uppercase">
+							系统主题风格
+						</div>
+						<button
+							onclick={() => setTheme('cyber')}
+							class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left text-xs font-semibold hover:bg-surface-bright/20 transition-all cursor-pointer {activeTheme === 'cyber' ? 'text-primary bg-primary/10 font-bold' : 'text-on-surface'}"
+						>
+							<span class="material-symbols-outlined text-[16px] {activeTheme === 'cyber' ? 'text-primary' : 'text-on-surface-variant'}">brightness_auto</span>
+							<div class="flex-grow">赛博霓虹</div>
+							{#if activeTheme === 'cyber'}
+								<span class="material-symbols-outlined text-primary text-[16px]">check</span>
+							{/if}
+						</button>
+						<button
+							onclick={() => setTheme('pi-light')}
+							class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left text-xs font-semibold hover:bg-surface-bright/20 transition-all cursor-pointer {activeTheme === 'pi-light' ? 'text-primary bg-primary/10 font-bold' : 'text-on-surface'}"
+						>
+							<span class="material-symbols-outlined text-[16px] {activeTheme === 'pi-light' ? 'text-primary' : 'text-on-surface-variant'}">light_mode</span>
+							<div class="flex-grow">极简浅色 (Pi)</div>
+							{#if activeTheme === 'pi-light'}
+								<span class="material-symbols-outlined text-primary text-[16px]">check</span>
+							{/if}
+						</button>
+						<button
+							onclick={() => setTheme('pi-dark')}
+							class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left text-xs font-semibold hover:bg-surface-bright/20 transition-all cursor-pointer {activeTheme === 'pi-dark' ? 'text-primary bg-primary/10 font-bold' : 'text-on-surface'}"
+						>
+							<span class="material-symbols-outlined text-[16px] {activeTheme === 'pi-dark' ? 'text-primary' : 'text-on-surface-variant'}">dark_mode</span>
+							<div class="flex-grow">极简深色 (Pi)</div>
+							{#if activeTheme === 'pi-dark'}
+								<span class="material-symbols-outlined text-primary text-[16px]">check</span>
+							{/if}
+						</button>
+					</div>
+				{/if}
+			</div>
+
 			<button
 				onclick={() => {
 					if (quizStore.currentUser) {
