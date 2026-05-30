@@ -399,7 +399,7 @@
 							<td class="py-5 text-right">
 								<button
 									onclick={() => viewExplanation(q.id)}
-									class="text-primary-container hover:text-primary border border-primary-container/30 hover:border-primary px-3 py-1 rounded-lg text-body-sm transition-all active:scale-95 cursor-pointer font-bold"
+									class="text-primary border border-primary/20 bg-primary/5 hover:bg-primary hover:text-on-primary hover:border-primary px-3 py-1.5 rounded-xl text-body-sm transition-all active:scale-95 cursor-pointer font-bold"
 								>
 									查看解析
 								</button>

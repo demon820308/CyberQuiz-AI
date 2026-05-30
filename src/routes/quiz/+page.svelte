@@ -170,16 +170,6 @@
 						</p>
 					</div>
 					
-					<!-- Floating 3D Graphic (Stylized Icon) -->
-					<div class="hidden md:flex relative w-36 h-36 items-center justify-center flex-shrink-0">
-						<div class="absolute inset-0 bg-primary/10 blur-2xl rounded-full"></div>
-						<div class="floating relative">
-							<div class="w-24 h-24 rounded-2xl bg-gradient-to-tr from-[#6366F1] to-[#A855F7] opacity-20 absolute top-0 left-0 animate-pulse"></div>
-							<span class="material-symbols-outlined text-primary text-[72px]" style="font-variation-settings: 'FILL' 1;">
-								{currentQ.type === 'single' ? 'radio_button_checked' : 'check_box'}
-							</span>
-						</div>
-					</div>
 				</div>
 			</div>
 
@@ -188,7 +178,7 @@
 				{#each Object.entries(currentQ.options) as [key, val]}
 					<label
 						onclick={() => handleOptionClick(key)}
-						class="glass-panel rounded-2xl p-6 flex items-center justify-between cursor-pointer border transition-all duration-300 group active:scale-[0.99] {isOptionSelected(key) ? 'border-primary bg-primary/5 shadow-[0_0_15px_rgba(99,102,241,0.15)]' : 'border-transparent hover:border-primary/40'}"
+						class="glass-panel rounded-2xl p-6 flex items-center justify-start cursor-pointer border transition-all duration-300 group active:scale-[0.99] {isOptionSelected(key) ? 'border-primary bg-primary/5 shadow-[0_0_15px_rgba(99,102,241,0.15)]' : 'border-transparent hover:border-primary/40'}"
 					>
 						<div class="flex items-center gap-gutter">
 							<div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold font-code transition-all {isOptionSelected(key) ? 'bg-primary text-on-primary shadow-lg shadow-indigo-500/20' : 'bg-surface-variant text-on-surface-variant group-hover:text-primary'}">
@@ -197,22 +187,6 @@
 							<span class="font-body-md text-on-surface transition-colors {isOptionSelected(key) ? 'text-primary font-bold' : ''}">
 								{val}
 							</span>
-						</div>
-						<!-- Selection Circle or Box -->
-						<div class="flex-shrink-0 flex items-center justify-center">
-							{#if currentQ.type === 'single'}
-								<div class="w-6 h-6 rounded-full border-2 transition-all flex items-center justify-center {isOptionSelected(key) ? 'border-primary' : 'border-outline-variant/30 group-hover:border-primary/50'}">
-									{#if isOptionSelected(key)}
-										<div class="w-3 h-3 rounded-full bg-primary"></div>
-									{/if}
-								</div>
-							{:else}
-								<div class="w-6 h-6 rounded border-2 transition-all flex items-center justify-center {isOptionSelected(key) ? 'border-primary bg-primary text-on-primary' : 'border-outline-variant/30 group-hover:border-primary/50'}">
-									{#if isOptionSelected(key)}
-										<span class="material-symbols-outlined text-[18px]">check</span>
-									{/if}
-								</div>
-							{/if}
 						</div>
 					</label>
 				{/each}
@@ -325,7 +299,7 @@
 					<div class="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
 						<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
 					</div>
-					<h3 class="font-headline-md text-headline-md text-primary-container">详细解析</h3>
+					<h3 class="font-headline-md text-headline-md text-primary">详细解析</h3>
 				</div>
 				
 				<div class="text-on-surface-variant leading-relaxed whitespace-pre-wrap font-body-md border-t border-outline-variant/10 pt-4">

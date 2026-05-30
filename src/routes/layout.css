@@ -149,7 +149,7 @@ html[data-theme="pi-light"] {
 	--surface-container-low: #fafafa;
 	--surface-container-lowest: #ffffff;
 	--surface-variant: #eeeeee;
-	--surface-bright: #fcfcfc;
+	--surface-bright: #9ca3af;
 	--surface-dim: #f3f4f6;
 	--surface-tint: #2563eb;
 	
@@ -206,7 +206,7 @@ html[data-theme="pi-dark"] {
 	--surface-container-low: #1e1e1e;
 	--surface-container-lowest: #121212;
 	--surface-variant: #2e2e2e;
-	--surface-bright: #282828;
+	--surface-bright: #555555;
 	--surface-dim: #151515;
 	--surface-tint: #60a5fa;
 	

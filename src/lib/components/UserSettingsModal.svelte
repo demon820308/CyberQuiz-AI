@@ -194,7 +194,7 @@
 					<div class="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider">当前登录账号</div>
 					<div class="text-sm font-extrabold text-on-surface flex items-center gap-1.5">
 						{quizStore.currentUser.nickname}
-						<span class="text-[10px] font-code text-primary-container px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20">
+						<span class="text-[10px] font-code text-primary px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20">
 							@{quizStore.currentUser.username}
 						</span>
 					</div>

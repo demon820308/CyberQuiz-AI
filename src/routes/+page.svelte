@@ -162,7 +162,7 @@
 			</div>
 			<button
 				onclick={() => startPractice('sequential')}
-				class="mt-8 w-full py-4 bg-surface-container-high hover:bg-primary-container/20 hover:text-primary text-on-surface font-bold rounded-2xl transition-all cursor-pointer active:scale-95 flex items-center justify-center gap-2"
+				class="mt-8 w-full py-4 bg-surface-container-high hover:bg-primary hover:text-on-primary text-on-surface font-bold rounded-2xl transition-all cursor-pointer active:scale-95 flex items-center justify-center gap-2"
 			>
 				开始顺序练习
 				<span class="material-symbols-outlined text-sm">arrow_forward</span>
@@ -187,7 +187,7 @@
 			</div>
 			<button
 				onclick={() => startPractice('random')}
-				class="mt-8 w-full py-4 bg-surface-container-high hover:bg-secondary-container/25 hover:text-secondary text-on-surface font-bold rounded-2xl transition-all cursor-pointer active:scale-95 flex items-center justify-center gap-2"
+				class="mt-8 w-full py-4 bg-surface-container-high hover:bg-secondary hover:text-on-secondary text-on-surface font-bold rounded-2xl transition-all cursor-pointer active:scale-95 flex items-center justify-center gap-2"
 			>
 				开始随机练习
 				<span class="material-symbols-outlined text-sm">arrow_forward</span>
@@ -213,7 +213,7 @@
 			<button
 				onclick={() => startPractice('wrong')}
 				disabled={wrongBookCount === 0}
-				class="mt-8 w-full py-4 {wrongBookCount === 0 ? 'bg-surface-container-high/50 text-on-surface-variant cursor-not-allowed' : 'bg-surface-container-high hover:bg-error-container/20 hover:text-error text-on-surface cursor-pointer'} font-bold rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2"
+				class="mt-8 w-full py-4 {wrongBookCount === 0 ? 'bg-surface-container-high/50 text-on-surface-variant cursor-not-allowed' : 'bg-surface-container-high hover:bg-error hover:text-on-error text-on-surface cursor-pointer'} font-bold rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2"
 			>
 				{wrongBookCount === 0 ? '暂无错题' : '开始错题攻坚'}
 				<span class="material-symbols-outlined text-sm">arrow_forward</span>
