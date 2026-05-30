@@ -401,14 +401,19 @@ html[data-theme^="pi-"] .row-hover:hover {
 	border-radius: 10px;
 }
 
-/* Custom class to elegantly blend the cyber book 3D image on dark themes and format it nicely in light themes */
-html:not([data-theme="pi-light"]) .cyber-book-img {
+/* Dark theme graphics: visible by default, hidden on light theme */
+.dark-book-graphic {
+	display: block;
 	mix-blend-mode: screen;
 }
+html[data-theme="pi-light"] .dark-book-graphic {
+	display: none !important;
+}
 
-html[data-theme="pi-light"] .cyber-book-img {
-	border-radius: 24px;
-	border: 6px solid #e5e7eb !important;
-	box-shadow: 0 15px 30px rgba(0, 0, 0, 0.06) !important;
-	background-color: #0b1326 !important; /* Keep a dark canvas so the neon book graphics stand out and glow beautifully! */
+/* Light theme graphics: hidden by default, visible on light theme */
+.light-book-graphic {
+	display: none !important;
+}
+html[data-theme="pi-light"] .light-book-graphic {
+	display: block !important;
 }

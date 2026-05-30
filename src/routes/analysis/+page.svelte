@@ -139,10 +139,17 @@
 		<div class="hidden lg:block relative w-[240px] h-[160px] pointer-events-none flex-shrink-0">
 			<div class="relative w-full h-full flex items-center justify-center">
 				<div class="absolute w-40 h-40 bg-indigo-500/10 rounded-full blur-[60px] animate-pulse"></div>
+				<!-- Dark Theme Graphic -->
 				<img
-					alt="Dashboard Abstract"
-					class="w-36 h-36 object-contain rounded-3xl transform rotate-12 glass-card border-indigo-500/30 cyber-book-img"
+					alt="Dashboard Abstract Dark"
+					class="w-36 h-36 object-contain rounded-3xl transform rotate-12 glass-card border-indigo-500/30 dark-book-graphic"
 					src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdwYHKeS--NW7HBcAovF1jbSFCWXtGY0HZD5fR_lAGTVKcxpmvGJAOLmW_hJWT14gJDDFHJf-F8okfOTiS8fuCap6XIISzRlaOYMvUZ21v8OLbe1foRoKptLNtmXGfN8ksAWACh6qZmkXxGfL3MJahdQzzt9-N26fsttxz6NoEM3tN746EAIQwvGIwSWFUcxdYKJMRW76g32wrpPy1H6Pc7expagtlOIg8Ue-GtZ9MjtipqPdMc_ODrP4SVxWwltG8uU93x9O6d8rh"
+				/>
+				<!-- Light Theme Graphic -->
+				<img
+					alt="Dashboard Abstract Light"
+					class="w-36 h-36 object-contain rounded-3xl transform rotate-12 drop-shadow-[0_6px_20px_rgba(0,0,0,0.05)] light-book-graphic"
+					src="/minimalist_book.png"
 				/>
 			</div>
 		</div>

@@ -119,10 +119,17 @@
 			<div class="hidden md:flex justify-center items-center relative">
 				<div class="absolute w-64 h-64 bg-primary/20 blur-[80px] rounded-full animate-pulse"></div>
 				<div class="floating relative">
+					<!-- Dark Theme Book Graphic -->
 					<img
 						alt="Cyber Bookshelf 3D Graphic"
-						class="w-72 h-72 object-contain drop-shadow-[0_0_40px_rgba(99,102,241,0.4)] cyber-book-img"
+						class="w-72 h-72 object-contain drop-shadow-[0_0_40px_rgba(99,102,241,0.4)] dark-book-graphic"
 						src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdwYHKeS--NW7HBcAovF1jbSFCWXtGY0HZD5fR_lAGTVKcxpmvGJAOLmW_hJWT14gJDDFHJf-F8okfOTiS8fuCap6XIISzRlaOYMvUZ21v8OLbe1foRoKptLNtmXGfN8ksAWACh6qZmkXxGfL3MJahdQzzt9-N26fsttxz6NoEM3tN746EAIQwvGIwSWFUcxdYKJMRW76g32wrpPy1H6Pc7expagtlOIg8Ue-GtZ9MjtipqPdMc_ODrP4SVxWwltG8uU93x9O6d8rh"
+					/>
+					<!-- Light Theme Minimalist Graphic -->
+					<img
+						alt="Minimalist Book 3D Graphic"
+						class="w-72 h-72 object-contain drop-shadow-[0_8px_30px_rgba(0,0,0,0.05)] light-book-graphic animate-pulse"
+						src="/minimalist_book.png"
 					/>
 				</div>
 			</div>
