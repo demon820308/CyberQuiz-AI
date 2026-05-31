@@ -171,7 +171,7 @@
 						class="donut-chart w-full h-full flex items-center justify-center transition-all duration-500 rounded-full"
 						style="background: conic-gradient(#6366F1 0% {singlePercent}%, #A855F7 {singlePercent}% 100%)"
 					>
-						<div class="donut-hole w-28 h-28 flex flex-col items-center justify-center bg-[#0b1326] rounded-full shadow-inner border border-outline-variant/10">
+						<div class="donut-hole w-28 h-28 flex flex-col items-center justify-center bg-surface rounded-full shadow-inner border border-outline-variant/10">
 							<span class="font-headline-xl text-[28px] text-on-surface font-extrabold">{totalQuestions}</span>
 							<span class="text-on-surface-variant text-body-sm">总题数</span>
 						</div>

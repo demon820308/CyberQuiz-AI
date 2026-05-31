@@ -250,7 +250,7 @@
 					bind:value={searchQuery}
 					oninput={handleSearchInput}
 					placeholder="搜索题目关键词"
-					class="w-full bg-[#0b1326]/60 border border-outline-variant/20 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl pl-11 pr-4 py-2.5 text-xs text-on-surface transition-all outline-none"
+					class="w-full bg-surface-container-high/60 border border-outline-variant/20 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl pl-11 pr-4 py-2.5 text-xs text-on-surface transition-all outline-none"
 				/>
 			</div>
 
@@ -512,7 +512,7 @@
 					<input
 						type="text"
 						bind:value={jumpPageInput}
-						class="w-12 bg-[#0b1326]/60 border border-outline-variant/20 focus:border-primary rounded-xl px-2 py-1.5 text-center text-xs text-on-surface outline-none"
+						class="w-12 bg-surface-container-high/60 border border-outline-variant/20 focus:border-primary rounded-xl px-2 py-1.5 text-center text-xs text-on-surface outline-none"
 						placeholder={currentPage.toString()}
 					/>
 					<span>页</span>
@@ -539,7 +539,7 @@
 {/if}
 
 {#if showDeleteConfirm}
-	<div class="fixed inset-0 z-[1000] flex items-center justify-center bg-[#0b1326]/85 backdrop-blur-md p-4 animate-in fade-in duration-300">
+	<div class="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-md p-4 animate-in fade-in duration-300">
 		<div class="w-full max-w-sm glass-card rounded-3xl p-6 md:p-8 border border-error/30 cyber-glow-error text-center space-y-5 animate-in zoom-in-95 duration-300 relative overflow-hidden">
 			<!-- Decorative red glowing bubble -->
 			<div class="absolute -top-16 -right-16 w-32 h-32 bg-error/10 rounded-full blur-[40px] pointer-events-none"></div>

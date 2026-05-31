@@ -30,7 +30,7 @@
 	let previewList = $derived(questions.slice(0, 3));
 </script>
 
-<div class="fixed inset-0 z-[999] flex items-center justify-center bg-[#0b1326]/80 backdrop-blur-md p-4 animate-in fade-in duration-300">
+<div class="fixed inset-0 z-[999] flex items-center justify-center bg-black/60 backdrop-blur-md p-4 animate-in fade-in duration-300">
 	<!-- Modal Panel -->
 	<div class="relative w-full max-w-3xl max-h-[85vh] glass-card rounded-3xl p-6 md:p-8 border border-primary/30 cyber-glow-primary overflow-hidden flex flex-col justify-between animate-in zoom-in-95 duration-300">
 		

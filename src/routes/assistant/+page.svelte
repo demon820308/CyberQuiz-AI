@@ -422,7 +422,7 @@
 							type="password"
 							bind:value={inputApiKey}
 							placeholder="sk-..."
-							class="w-full bg-[#0b1326] border border-outline-variant/30 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-2.5 text-xs text-on-surface font-code transition-all outline-none"
+							class="w-full bg-surface-container-high/60 border border-outline-variant/30 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-2.5 text-xs text-on-surface font-code transition-all outline-none"
 						/>
 					</div>
 
@@ -434,7 +434,7 @@
 							type="text"
 							bind:value={inputApiEndpoint}
 							placeholder="https://api.openai.com/v1"
-							class="w-full bg-[#0b1326] border border-outline-variant/30 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-2.5 text-xs text-on-surface font-code transition-all outline-none"
+							class="w-full bg-surface-container-high/60 border border-outline-variant/30 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-2.5 text-xs text-on-surface font-code transition-all outline-none"
 						/>
 					</div>
 
@@ -446,7 +446,7 @@
 							type="text"
 							bind:value={inputModel}
 							placeholder="gpt-4o-mini"
-							class="w-full bg-[#0b1326] border border-outline-variant/30 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-2.5 text-xs text-on-surface font-code transition-all outline-none"
+							class="w-full bg-surface-container-high/60 border border-outline-variant/30 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl px-4 py-2.5 text-xs text-on-surface font-code transition-all outline-none"
 						/>
 					</div>
 				</div>

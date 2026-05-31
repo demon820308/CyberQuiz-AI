@@ -315,7 +315,7 @@
 									type="text"
 									placeholder="搜索用户名或昵称"
 									bind:value={userSearchQuery}
-									class="w-full bg-[#0b1326]/60 border border-outline-variant/25 focus:border-primary rounded-xl pl-9 pr-4 py-2 text-xs text-on-surface transition-all outline-none"
+									class="w-full bg-surface-container-high/60 border border-outline-variant/25 focus:border-primary rounded-xl pl-9 pr-4 py-2 text-xs text-on-surface transition-all outline-none"
 								/>
 							</div>
 						</div>
@@ -561,10 +561,10 @@
 									<select
 										id="know_sem"
 										bind:value={knowledgeSemesterInput}
-										class="w-full bg-[#0b1326]/60 border border-outline-variant/20 focus:border-primary rounded-xl px-3 py-2 text-xs text-on-surface outline-none transition-all"
+										class="w-full bg-surface-container-high/60 border border-outline-variant/20 focus:border-primary rounded-xl px-3 py-2 text-xs text-on-surface outline-none transition-all"
 									>
 										{#each semesters as s}
-											<option value={s.id} class="bg-[#0b1326]">{s.name}</option>
+											<option value={s.id} class="bg-surface-container-high text-on-surface">{s.name}</option>
 										{/each}
 									</select>
 								</div>
@@ -574,10 +574,10 @@
 									<select
 										id="know_sub"
 										bind:value={knowledgeSubjectInput}
-										class="w-full bg-[#0b1326]/60 border border-outline-variant/20 focus:border-primary rounded-xl px-3 py-2 text-xs text-on-surface outline-none transition-all"
+										class="w-full bg-surface-container-high/60 border border-outline-variant/20 focus:border-primary rounded-xl px-3 py-2 text-xs text-on-surface outline-none transition-all"
 									>
 										{#each subjects as sub}
-											<option value={sub.id} class="bg-[#0b1326]">{sub.name}</option>
+											<option value={sub.id} class="bg-surface-container-high text-on-surface">{sub.name}</option>
 										{/each}
 									</select>
 								</div>
@@ -588,11 +588,11 @@
 								<select
 									id="know_diff"
 									bind:value={knowledgeDifficultyInput}
-									class="w-full bg-[#0b1326]/60 border border-outline-variant/20 focus:border-primary rounded-xl px-3 py-2 text-xs text-on-surface outline-none transition-all"
+									class="w-full bg-surface-container-high/60 border border-outline-variant/20 focus:border-primary rounded-xl px-3 py-2 text-xs text-on-surface outline-none transition-all"
 								>
-									<option value="easy" class="bg-[#0b1326]">简单 (Easy)</option>
-									<option value="medium" class="bg-[#0b1326]">中等 (Medium)</option>
-									<option value="hard" class="bg-[#0b1326]">困难 (Hard)</option>
+									<option value="easy" class="bg-surface-container-high text-on-surface">简单 (Easy)</option>
+									<option value="medium" class="bg-surface-container-high text-on-surface">中等 (Medium)</option>
+									<option value="hard" class="bg-surface-container-high text-on-surface">困难 (Hard)</option>
 								</select>
 							</div>
 
@@ -644,7 +644,7 @@
 										placeholder="粘帖包含主观问答题的 Markdown 文本内容..."
 										bind:value={knowledgeRawText}
 										oninput={handleKnowledgeTextChange}
-										class="w-full h-28 bg-[#0b1326]/60 border border-outline-variant/20 focus:border-primary rounded-xl px-3 py-2 text-xs text-on-surface outline-none transition-all font-mono resize-none font-medium"
+										class="w-full h-28 bg-surface-container-high/60 border border-outline-variant/20 focus:border-primary rounded-xl px-3 py-2 text-xs text-on-surface outline-none transition-all font-mono resize-none font-medium"
 									></textarea>
 								</div>
 							{/if}

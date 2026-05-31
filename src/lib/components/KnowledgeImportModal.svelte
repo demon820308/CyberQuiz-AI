@@ -93,7 +93,7 @@
 	}
 </script>
 
-<div class="fixed inset-0 z-[999] flex items-center justify-center bg-[#0b1326]/85 backdrop-blur-md p-4 animate-in fade-in duration-300">
+<div class="fixed inset-0 z-[999] flex items-center justify-center bg-black/60 backdrop-blur-md p-4 animate-in fade-in duration-300">
 	<!-- Modal Box Card -->
 	<div class="relative w-full max-w-3xl max-h-[90vh] glass-card rounded-3xl p-6 md:p-8 border border-primary/30 cyber-glow-primary overflow-hidden flex flex-col justify-between animate-in zoom-in-95 duration-300">
 		
@@ -136,10 +136,10 @@
 						id="import_sem"
 						bind:value={semester}
 						disabled={lockSelections}
-						class="w-full bg-[#0b1326]/60 border border-outline-variant/20 focus:border-primary rounded-xl px-4 py-2.5 text-xs text-on-surface outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-container-low/20"
+						class="w-full bg-surface-container-high/60 border border-outline-variant/20 focus:border-primary rounded-xl px-4 py-2.5 text-xs text-on-surface outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-container-low/20"
 					>
 						{#each semesters as s}
-							<option value={s.id} class="bg-[#0b1326]">{s.name}</option>
+							<option value={s.id} class="bg-surface-container-high text-on-surface">{s.name}</option>
 						{/each}
 					</select>
 				</div>
@@ -156,10 +156,10 @@
 						id="import_sub"
 						bind:value={subject}
 						disabled={lockSelections}
-						class="w-full bg-[#0b1326]/60 border border-outline-variant/20 focus:border-primary rounded-xl px-4 py-2.5 text-xs text-on-surface outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-container-low/20"
+						class="w-full bg-surface-container-high/60 border border-outline-variant/20 focus:border-primary rounded-xl px-4 py-2.5 text-xs text-on-surface outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-container-low/20"
 					>
 						{#each subjects as sub}
-							<option value={sub.id} class="bg-[#0b1326]">{sub.name}</option>
+							<option value={sub.id} class="bg-surface-container-high text-on-surface">{sub.name}</option>
 						{/each}
 					</select>
 				</div>
@@ -170,11 +170,11 @@
 					<select
 						id="import_diff"
 						bind:value={difficulty}
-						class="w-full bg-[#0b1326]/60 border border-outline-variant/20 focus:border-primary rounded-xl px-4 py-2.5 text-xs text-on-surface outline-none transition-all"
+						class="w-full bg-surface-container-high/60 border border-outline-variant/20 focus:border-primary rounded-xl px-4 py-2.5 text-xs text-on-surface outline-none transition-all"
 					>
-						<option value="easy" class="bg-[#0b1326]">简单 (Easy)</option>
-						<option value="medium" class="bg-[#0b1326]">中等 (Medium)</option>
-						<option value="hard" class="bg-[#0b1326]">困难 (Hard)</option>
+						<option value="easy" class="bg-surface-container-high text-on-surface">简单 (Easy)</option>
+						<option value="medium" class="bg-surface-container-high text-on-surface">中等 (Medium)</option>
+						<option value="hard" class="bg-surface-container-high text-on-surface">困难 (Hard)</option>
 					</select>
 				</div>
 			</div>
@@ -232,7 +232,7 @@
 						bind:value={rawText}
 						oninput={handleTextChange}
 						placeholder="在此粘帖您的 Markdown 问答题格式，例如：&#10;&#10;## 题目内容&#10;23.【增强权利观念】&#10;材料一 ...&#10;&#10;## 标准答案&#10;（1）...&#10;&#10;## 逻辑架构&#10;...&#10;&#10;## 记忆锚点&#10;..."
-						class="w-full h-40 bg-[#0b1326]/60 border border-outline-variant/20 focus:border-primary rounded-2xl px-4 py-3 text-xs text-on-surface outline-none transition-all font-mono resize-none"
+						class="w-full h-40 bg-surface-container-high/60 border border-outline-variant/20 focus:border-primary rounded-2xl px-4 py-3 text-xs text-on-surface outline-none transition-all font-mono resize-none"
 					></textarea>
 				</div>
 			{/if}

@@ -211,7 +211,7 @@
 					选择当前答题页面需要装载应用的客观选择题库：
 				</p>
 				
-				<div class="text-[11px] text-on-surface-variant/90 bg-[#0b1326]/40 px-3 py-2 rounded-xl border border-outline-variant/10 flex items-center justify-between">
+				<div class="text-[11px] text-on-surface-variant/90 bg-surface-container-high/40 px-3 py-2 rounded-xl border border-outline-variant/10 flex items-center justify-between">
 					<span>当前选择：</span>
 					<span class="text-primary font-extrabold">{quizStore.activeBankName}</span>
 				</div>
@@ -219,12 +219,12 @@
 				<select
 					value={quizStore.activeBankId || ''}
 					onchange={onSelectChange}
-					class="w-full bg-[#0b1326]/60 border border-outline-variant/20 focus:border-primary rounded-xl px-3 py-2 text-xs text-on-surface outline-none transition-all cursor-pointer font-bold font-sans"
+					class="w-full bg-surface-container-high/60 border border-outline-variant/20 focus:border-primary rounded-xl px-3 py-2 text-xs text-on-surface outline-none transition-all cursor-pointer font-bold font-sans"
 				>
 					<!-- Public/Global banks -->
-					<optgroup label="公共官方推荐题库" class="bg-[#0b1326] text-on-surface-variant font-bold">
+					<optgroup label="公共官方推荐题库" class="bg-surface-container-high text-on-surface-variant font-bold">
 						{#each quizStore.questionBanks.filter(b => b.is_global === 1) as bank}
-							<option value={bank.id} class="bg-[#0b1326] text-on-surface font-semibold">
+							<option value={bank.id} class="bg-surface-container-high text-on-surface font-semibold">
 								{bank.name} {quizStore.activeBankId === bank.id ? ' (应用中)' : ''}
 							</option>
 						{/each}
@@ -232,9 +232,9 @@
 
 					<!-- Personal private banks -->
 					{#if quizStore.questionBanks.some(b => b.is_global === 0)}
-						<optgroup label="我的个人专属题库" class="bg-[#0b1326] text-on-surface-variant font-bold">
+						<optgroup label="我的个人专属题库" class="bg-surface-container-high text-on-surface-variant font-bold">
 							{#each quizStore.questionBanks.filter(b => b.is_global === 0) as bank}
-								<option value={bank.id} class="bg-[#0b1326] text-on-surface font-semibold">
+								<option value={bank.id} class="bg-surface-container-high text-on-surface font-semibold">
 									{bank.name} {quizStore.activeBankId === bank.id ? ' (应用中)' : ''}
 								</option>
 							{/each}
@@ -371,7 +371,7 @@
 		>
 			<div
 				transition:scale={{ start: 0.95, duration: 150 }}
-				class="relative bg-[#0b1326]/95 border border-outline-variant/30 backdrop-blur-lg shadow-2xl rounded-[24px] p-6 max-w-[360px] w-full space-y-4 text-center"
+				class="relative bg-surface-container-high/95 border border-outline-variant/30 backdrop-blur-lg shadow-2xl rounded-[24px] p-6 max-w-[360px] w-full space-y-4 text-center"
 				onclick={(e) => e.stopPropagation()}
 			>
 				<div class="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center border border-primary/20 text-primary">
