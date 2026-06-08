@@ -67,7 +67,7 @@ function parseCalculationFormula(line: string): string {
 function parseStepFlow(steps: string[]): string {
 	if (steps.length < 2) return '';
 	
-	let html = `<div class="step-flow-card flex flex-col md:flex-row items-center justify-center gap-3 bg-surface-container-high/40 p-5 rounded-2xl border border-outline-variant/10 my-4 shadow-sm relative overflow-hidden">`;
+	let html = `<div class="step-flow-card flex flex-col md:flex-row md:flex-wrap items-center justify-center gap-3 bg-surface-container-high/40 p-5 rounded-2xl border border-outline-variant/10 my-4 shadow-sm relative overflow-hidden max-w-full">`;
 	// Decorative side lines
 	html += `<div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary to-secondary"></div>`;
 	
@@ -259,6 +259,15 @@ function renderMarkdownToHtml(markdown: string): string {
 		if (!trimmed) {
 			if (inList) flushList();
 			if (inQuote) flushQuote();
+			i++;
+			continue;
+		}
+
+		// Handle horizontal rules (e.g. ---) to prevent them from being parsed as list items and turned into `--` badges
+		if (trimmed === '---' || trimmed === '***' || trimmed === '___' || /^[-*_]{3,}$/.test(trimmed)) {
+			if (inList) flushList();
+			if (inQuote) flushQuote();
+			html += `<hr class="my-6 border-t border-outline-variant/15" />`;
 			i++;
 			continue;
 		}
