@@ -110,7 +110,11 @@ export function cleanVolumeTitle(title: string): string {
 }
 
 export function parseReadingMarkdown(mdContent: string, volumeId: string, fileName: string): ReadingVolume {
-	const lines = mdContent.split(/\r?\n/);
+	let cleanMd = mdContent;
+	// Clean colon newlines (e.g. 作用：\n\n描述 -> 作用：描述)
+	cleanMd = cleanMd.replace(/(作用|含义|例句|特点|原因|常表达|常见题型|答题模板|模板|建议)[：:]\s*\r?\n\s*([^\r\n]+)/g, '$1：$2');
+
+	const lines = cleanMd.split(/\r?\n/);
 	const chapters: ReadingChapter[] = [];
 	
 	let currentTitle = '';
@@ -144,7 +148,7 @@ export function parseReadingMarkdown(mdContent: string, volumeId: string, fileNa
 		const trimmed = line.trim();
 
 		// Detect heading line (e.g. # Chapter 1, ## Section 2)
-		if (trimmed.startsWith('#') && !trimmed.startsWith('######')) {
+		if (trimmed.startsWith('#') && !trimmed.startsWith('###')) {
 			const match = line.match(/^(#{1,5})\s+(.*)$/);
 			if (match) {
 				const hashes = match[1];

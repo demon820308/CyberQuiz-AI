@@ -12,6 +12,9 @@ function cleanMarkdownContent(content: string, fileName: string): string {
 	clean = clean.replace(/# 《中考语文阅读理解知识库 PRO MAX》\s*\r?\n/g, '');
 	clean = clean.replace(/# 《中考语文阅读理解知识库 PRO MAX》\s*/g, '');
 
+	// Clean colon newlines (e.g. 作用：\n\n描述 -> 作用：描述)
+	clean = clean.replace(/(作用|含义|例句|特点|原因|常表达|常见题型|答题模板|模板|建议)[：:]\s*\r?\n\s*([^\r\n]+)/g, '$1：$2');
+
 	// Strip "（教辅书版）" or other subtitles from the main # headers, but we can put them into a tip block or similar
 	if (fileName.includes('第一卷')) {
 		// Replace "# 第一卷：现代文阅读大全（教辅书版）" with clean title and tip block (if tip is not already there)
