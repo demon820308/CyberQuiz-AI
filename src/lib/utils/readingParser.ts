@@ -73,8 +73,8 @@ function parseStepFlow(steps: string[]): string {
 	
 	steps.forEach((step, index) => {
 		if (index > 0) {
-			html += `<span class="material-symbols-outlined text-primary-variant/50 hidden md:block select-none text-sm">double_arrow</span>`;
-			html += `<span class="material-symbols-outlined text-primary-variant/50 md:hidden select-none text-sm">arrow_downward</span>`;
+			html += `<span class="hidden md:inline-flex items-center"><span class="material-symbols-outlined text-primary-variant/50 select-none text-sm">double_arrow</span></span>`;
+			html += `<span class="md:hidden inline-flex items-center"><span class="material-symbols-outlined text-primary-variant/50 select-none text-sm">arrow_downward</span></span>`;
 		}
 		
 		html += `<div class="flex items-center gap-2 bg-surface-container-lowest/60 px-3 py-2 rounded-xl border border-outline-variant/5 hover:border-primary/20 transition-all duration-300">`;
@@ -140,14 +140,17 @@ export function parseReadingMarkdown(mdContent: string, volumeId: string, fileNa
 				const level = hashes.length;
 
 				// Skip document title headers if they're redundant at the very start
-				if (level === 1 && (hText.includes('中考语文阅读理解') || hText.includes('卷结束') || hText.includes('册'))) {
-					if (hText.includes('中考语文阅读理解')) {
+				if (level === 1) {
+					// Correctly extract volume names e.g. 第一卷, 第二卷
+					const volMatch = hText.match(/第[一二三四五六]卷/);
+					if (volMatch) {
 						docTitle = hText;
+					} else if (hText.includes('中考语文阅读理解') || hText.includes('卷结束') || hText.includes('册')) {
+						// Generic titles or ends, skip committing as a chapter
+						currentTitle = hText;
+						currentLevel = level;
+						continue;
 					}
-					// Keep reading title but don't commit empty chapter yet
-					currentTitle = hText;
-					currentLevel = level;
-					continue;
 				}
 
 				// Commit previous chapter
