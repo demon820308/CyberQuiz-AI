@@ -97,6 +97,18 @@ function escapeHtmlAttr(text: string): string {
 		.replace(/>/g, '&gt;');
 }
 
+export function cleanVolumeTitle(title: string): string {
+	const clean = title.trim();
+	if (clean.includes('第一卷')) return '第一卷：现代文阅读大全';
+	if (clean.includes('第二卷')) return '第二卷：说明文＋议论文阅读大全';
+	if (clean.includes('第三卷')) return '第三卷：文言文阅读大全';
+	if (clean.includes('第四卷')) return '第四卷：古诗词鉴赏大全';
+	if (clean.includes('第五卷')) return '第五卷：非连续性文本阅读 + 中考冲刺宝典';
+	if (clean.includes('第六卷')) return '第六卷：中考阅读理解满分模板库';
+	
+	return clean.replace(/^#+\s*/, '').replace(/《|》/g, '').replace(/_/g, ' ').replace(/PRO\s*MAX/gi, '').trim();
+}
+
 export function parseReadingMarkdown(mdContent: string, volumeId: string, fileName: string): ReadingVolume {
 	const lines = mdContent.split(/\r?\n/);
 	const chapters: ReadingChapter[] = [];
@@ -174,7 +186,7 @@ export function parseReadingMarkdown(mdContent: string, volumeId: string, fileNa
 
 	return {
 		id: volumeId,
-		title: docTitle,
+		title: cleanVolumeTitle(docTitle),
 		fileName,
 		chapters,
 		wordCount
@@ -423,14 +435,14 @@ function renderMarkdownToHtml(markdown: string): string {
 	return html;
 }
 
-// Function to render a Svelte/Tailwind template card with custom input underlines and copy-to-clipboard functionality
 function renderTemplateCard(text: string): string {
 	// Format the blank dots into styled input-like underlines
 	let cleanText = formatInlineStyles(text);
 	
-	// Replace blanks e.g. "……" or "______"
-	cleanText = cleanText.replace(/(……|______)/g, '<span class="border-b-2 border-dashed border-primary px-5 py-0.5 text-primary text-xs mx-1 font-extrabold select-all">______</span>');
-	cleanText = cleanText.replace(/(××)/g, '<span class="px-2 py-0.5 rounded bg-primary/10 border border-primary/25 text-primary text-xs mx-1 font-extrabold select-all">$1</span>');
+	// Replace blanks e.g. "……" or "______" with clean dashed underline (no text underscores underneath)
+	cleanText = cleanText.replace(/(……|______)/g, '<span class="border-b border-dashed border-primary px-6 py-0.5 text-primary text-xs mx-1 font-extrabold select-all">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
+	// Replace placeholders like "××" with simple text styling, removing pill badge borders/bg to prevent button confusion
+	cleanText = cleanText.replace(/(××)/g, '<span class="text-primary font-extrabold mx-0.5">$1</span>');
 	
 	// Create inline code block styled template text
 	const escapedText = escapeHtmlAttr(text);
