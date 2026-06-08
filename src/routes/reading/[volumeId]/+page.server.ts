@@ -1,9 +1,23 @@
-import fs from 'fs';
-import path from 'path';
+import volume1 from '$lib/data/yuwen/第一卷_现代文阅读大全_PRO_MAX.md?raw';
+import volume2 from '$lib/data/yuwen/第二卷_说明文与议论文阅读大全_PRO_MAX.md?raw';
+import volume3 from '$lib/data/yuwen/第三卷_文言文阅读大全_PRO_MAX.md?raw';
+import volume4 from '$lib/data/yuwen/第四卷_古诗词鉴赏大全_PRO_MAX.md?raw';
+import volume5 from '$lib/data/yuwen/第五卷：非连续性文本阅读 + 中考冲刺宝典 PRO MAX.md?raw';
+import volume6 from '$lib/data/yuwen/第六卷《中考阅读理解满分模板库 PRO MAX》.md?raw';
+
 import { parseReadingMarkdown } from '$lib/utils/readingParser';
 import type { PageServerLoad } from './$types';
 
-const volumeFiles: Record<string, string> = {
+const volumeContents: Record<string, string> = {
+	volume1,
+	volume2,
+	volume3,
+	volume4,
+	volume5,
+	volume6
+};
+
+const volumeFileNames: Record<string, string> = {
 	volume1: '第一卷_现代文阅读大全_PRO_MAX.md',
 	volume2: '第二卷_说明文与议论文阅读大全_PRO_MAX.md',
 	volume3: '第三卷_文言文阅读大全_PRO_MAX.md',
@@ -14,40 +28,14 @@ const volumeFiles: Record<string, string> = {
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { volumeId } = params;
-	const fileName = volumeFiles[volumeId];
-	if (!fileName) {
+	const content = volumeContents[volumeId];
+	const fileName = volumeFileNames[volumeId];
+	
+	if (!content || !fileName) {
 		throw new Error('未找到对应的卷资料');
 	}
 
-	let fileContent = '';
-	const localPath = path.join('E:', 'yuwen', fileName);
-	const bundledPath = path.join(process.cwd(), 'src', 'lib', 'data', 'yuwen', fileName);
-
-	// Developer path priority read and sync
-	if (fs.existsSync(localPath)) {
-		try {
-			fileContent = fs.readFileSync(localPath, 'utf-8');
-			fs.writeFileSync(bundledPath, fileContent, 'utf-8');
-		} catch (err) {
-			console.error(`[Local Sync Error] Failed to read from E:\\yuwen:`, err);
-		}
-	}
-
-	// Bundled path fallback
-	if (!fileContent) {
-		if (fs.existsSync(bundledPath)) {
-			try {
-				fileContent = fs.readFileSync(bundledPath, 'utf-8');
-			} catch (err) {
-				console.error(`[Local Load Error] Failed to load bundled file:`, err);
-				throw new Error(`无法读取备份卷文件: ${fileName}`);
-			}
-		} else {
-			throw new Error(`未找到备份卷文件: ${fileName}`);
-		}
-	}
-
-	const volumeData = parseReadingMarkdown(fileContent, volumeId, fileName);
+	const volumeData = parseReadingMarkdown(content, volumeId, fileName);
 
 	return {
 		volume: volumeData
