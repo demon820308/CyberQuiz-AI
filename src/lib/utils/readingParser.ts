@@ -435,12 +435,8 @@ function renderTemplateCard(text: string): string {
 	// Create inline code block styled template text
 	const escapedText = escapeHtmlAttr(text);
 
-	let cardHtml = `<div class="template-card relative my-4.5 p-5 border border-dashed border-primary/20 hover:border-primary/45 bg-surface-container-high/40 hover:bg-surface-container-high/60 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 group transition-all duration-300 shadow-sm">`;
-	cardHtml += `<div class="template-text text-sm font-semibold text-on-surface leading-relaxed flex-grow pr-0 md:pr-10 whitespace-pre-line">${cleanText}</div>`;
-	cardHtml += `<button class="btn-copy-template flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-bold text-primary bg-primary/10 border border-primary/20 hover:bg-primary hover:text-on-primary rounded-xl transition-all cursor-pointer select-none shrink-0 self-end md:self-center" data-text="${escapedText}">`;
-	cardHtml += `<span class="material-symbols-outlined text-[16px] pointer-events-none">content_copy</span>`;
-	cardHtml += `<span>复制模板</span>`;
-	cardHtml += `</button>`;
+	let cardHtml = `<div class="template-card relative my-4.5 p-5 border border-dashed border-primary/20 hover:border-primary/45 bg-surface-container-high/40 hover:bg-surface-container-high/60 rounded-2xl transition-all duration-300 shadow-sm">`;
+	cardHtml += `<div class="template-text text-sm font-semibold text-on-surface leading-relaxed whitespace-pre-line">${cleanText}</div>`;
 	cardHtml += `</div>`;
 	
 	return cardHtml;

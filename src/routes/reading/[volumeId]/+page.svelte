@@ -31,19 +31,6 @@
 		}
 	}
 
-	// Handle copy template clicks via event delegation
-	function handleContainerClick(event: MouseEvent) {
-		const target = event.target as HTMLElement;
-		const copyBtn = target.closest('.btn-copy-template');
-		if (copyBtn) {
-			const textToCopy = copyBtn.getAttribute('data-text');
-			if (textToCopy) {
-				navigator.clipboard.writeText(textToCopy);
-				quizStore.showToast('答题模板复制成功，可直接使用！', 'success');
-			}
-		}
-	}
-
 	// Dynamic active anchor tracking (ScrollSpy)
 	$effect(() => {
 		if (chapters.length === 0) return;
@@ -91,7 +78,7 @@
 	<title>{volume?.title || '阅读理解'} - CyberQuiz AI</title>
 </svelte:head>
 
-<div class="pt-16 pb-20 min-h-screen bg-surface-container-lowest flex flex-col relative" onclick={handleContainerClick}>
+<div class="pt-16 pb-20 min-h-screen bg-surface-container-lowest flex flex-col relative">
 	
 	<!-- Top Sticky Navigation & Controls Bar -->
 	<header class="sticky top-16 z-30 w-full bg-surface-container/90 backdrop-blur-xl border-b border-outline-variant/15 px-4 md:px-6 py-3 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
