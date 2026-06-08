@@ -191,6 +191,15 @@
 	<div class="flex items-center gap-4">
 		<!-- Desktop Buttons -->
 		<div class="hidden md:flex items-center gap-2">
+			<!-- Chinese Reading Comprehension Shortcut Button -->
+			<a
+				href="/reading"
+				class="flex items-center gap-2 bg-primary-container/20 border border-primary/30 text-primary px-4 py-2 rounded-xl hover:bg-primary-container/30 transition-all duration-300 active:scale-95"
+			>
+				<span class="material-symbols-outlined text-[20px]">auto_stories</span>
+				<span class="font-label-md text-label-md">语文阅读理解</span>
+			</a>
+
 			<!-- Knowledge Q&A Shortcut Button -->
 			<a
 				href="/knowledge"
@@ -204,6 +213,13 @@
 
 		<!-- Mobile Buttons -->
 		<div class="flex md:hidden items-center gap-1">
+			<a
+				href="/reading"
+				class="p-2 text-primary hover:bg-surface-bright/10 rounded-full transition-all"
+				title="语文阅读理解"
+			>
+				<span class="material-symbols-outlined">auto_stories</span>
+			</a>
 			<a
 				href="/knowledge"
 				class="p-2 text-secondary hover:bg-surface-bright/10 rounded-full transition-all"
